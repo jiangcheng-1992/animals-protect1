@@ -608,10 +608,10 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* 邀请欢迎横幅 */
-#invite-welcome{position:fixed;top:calc(env(safe-area-inset-top,0px) + 68px);left:50%;
+#invite-welcome{position:fixed;top:calc(env(safe-area-inset-top,0px) + 96px);left:50%;
   transform:translateX(-50%) translateY(-140%);z-index:90;
   background:linear-gradient(135deg,rgba(15,20,25,.96),rgba(30,40,50,.96));
-  border:1px solid rgba(200,160,87,.4);border-radius:14px;padding:14px 18px;
+  border:1px solid rgba(200,160,87,.4);border-radius:14px;padding:18px 22px 16px;
   max-width:90vw;width:360px;text-align:center;backdrop-filter:blur(14px);
   box-shadow:var(--shadow-lux);transition:.7s cubic-bezier(.22,1,.36,1)}
 #invite-welcome.show{transform:translateX(-50%) translateY(0)}
@@ -637,7 +637,7 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
   .share-channels{grid-template-columns:repeat(4,1fr);gap:8px}
   .share-channels .ch{padding:8px 2px}
   .share-channels .ch .ic{width:26px;height:26px;font-size:15px}
-  #invite-welcome{width:calc(100vw - 24px)}
+  #invite-welcome{width:calc(100vw - 24px);top:calc(env(safe-area-inset-top,0px) + 78px)}
 }
 
 /* ========== 数据来源小标识 ========== */
@@ -895,7 +895,6 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
     <span class="sub">34 省 · 100+ 物种 · 数字生态志</span>
   </div>
   <nav class="nav">
-    <a id="nav-explore" data-i18n="nav.explore">探索地图</a>
     <a id="nav-about" data-i18n="nav.about">关于项目</a>
     <div id="lang-sw"><button data-lang="zh" class="on">中</button><button data-lang="en">EN</button></div>
   </nav>
@@ -1032,11 +1031,13 @@ function endCine(){
 /* 默认 4.8s 后自动退场;数据加载完也会调用 endCine */
 const CINE_MIN=7200;const cineStart=Date.now();setTimeout(endCine,CINE_MIN);
 document.getElementById('cine-skip').addEventListener('click',endCine);
-document.getElementById('nav-explore').addEventListener('click',()=>{
-  document.getElementById('btn-rst').click();
-});
 document.getElementById('nav-about').addEventListener('click',()=>{
-  alert('《万物共生》\n\n中国濒危动物数字生态志\n以 3D 交互地图呈现 34 省 100+ 濒危物种\n用科技守护生命\n\n数据来源:IUCN 红色名录 / 国家重点保护野生动物名录');
+  const lang=(window.currentLang||'zh');
+  if(lang==='en'){
+    alert('LIVING ATLAS\n\nChina\'s Endangered Species Digital Ecology\n34 Provinces · 100+ Species · 3D Interactive Map\nGuarding Life Through Technology\n\nData: IUCN Red List / China National Key Protected Wildlife List\n\n————\nAuthor: Kuai Ge\n© 2026 All Rights Reserved');
+  }else{
+    alert('《万物共生》\n\n中国濒危动物数字生态志\n以 3D 交互地图呈现 34 省 100+ 濒危物种\n用科技守护生命\n\n数据来源:IUCN 红色名录 / 国家重点保护野生动物名录\n\n————\n作 者:姜承\n致谢  :所有为中国野生动物保护默默付出的人们\n© 2026 版权所有');
+  }
 });
 
 /* ===== 阻止面板事件穿透到地图 ===== */
@@ -1797,10 +1798,12 @@ function wrapText(ctx,text,x,y,maxW,lh){
   lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lh));
 }
 document.getElementById('share-close').addEventListener('click',()=>document.getElementById('share').classList.remove('show'));
-document.getElementById('share-dl').addEventListener('click',()=>{
+/* v15.2 share-dl 已被统一的 .share-channels[data-ch="save"] 接管,做空值兜底 */
+const _dlBtn=document.getElementById('share-dl');
+if(_dlBtn){_dlBtn.addEventListener('click',()=>{
   const cvs=document.getElementById('share-canvas');
   const a=document.createElement('a');a.download='万物共生-守护图鉴.png';a.href=cvs.toDataURL('image/png');a.click();
-});
+});}
 
 /* v14.6: 不再在浏览/点击 tooltip 时自动解锁,仅在用户主动按下『解锁图鉴』按钮时解锁 */
 
@@ -1952,9 +1955,11 @@ const I18N={
     "cine.poem":"In the name of all beings · A legacy for our age","cine.skip":"SKIP INTRO",
   }
 };
-let curLang=localStorage.getItem('wwgs_lang')||(navigator.language||'zh').toLowerCase().startsWith('en')?'en':'zh';
+let curLang = localStorage.getItem('wwgs_lang') || ( (navigator.language||'zh').toLowerCase().startsWith('en') ? 'en' : 'zh' );
 function t(k){return (I18N[curLang]&&I18N[curLang][k])||I18N.zh[k]||k}
+window.currentLang=curLang;
 function applyI18n(){
+  window.currentLang=curLang;
   /* 1. 所有 [data-i18n] */
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     const k=el.dataset.i18n;const v=t(k);if(v)el.innerHTML=v;
@@ -1991,7 +1996,7 @@ function applyI18n(){
   /* 6. html lang */
   document.documentElement.lang=curLang==='en'?'en':'zh-CN';
 }
-function setLang(l){curLang=l;localStorage.setItem('wwgs_lang',l);
+function setLang(l){curLang=l;window.currentLang=l;localStorage.setItem('wwgs_lang',l);
   document.querySelectorAll('#lang-sw button').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));
   applyI18n();
 }
