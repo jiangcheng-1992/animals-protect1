@@ -579,24 +579,28 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
   10%{opacity:1}
   100%{opacity:0;transform:translateY(-340px) scale(1.2)}}
 
-#reveal .card{position:relative;width:min(420px,85vw);padding:0;border-radius:24px;
+#reveal .card{position:relative;width:min(420px,88vw);max-height:calc(100vh - 60px);
+  padding:0;border-radius:24px;
   background:linear-gradient(180deg,#1a2028,#0d1318);
   border:1px solid rgba(200,160,87,.35);
   box-shadow:0 40px 120px rgba(0,0,0,.7),inset 0 1px 0 rgba(200,160,87,.2),
     0 0 80px rgba(200,160,87,.25);
   transform:scale(.7) translateY(40px);opacity:0;
-  animation:cardIn .9s var(--ease-cine) .5s forwards;overflow:hidden}
+  animation:cardIn .9s var(--ease-cine) .5s forwards;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch}
+#reveal .card::-webkit-scrollbar{width:3px}
+#reveal .card::-webkit-scrollbar-thumb{background:rgba(200,160,87,.3);border-radius:2px}
 @keyframes cardIn{to{transform:scale(1) translateY(0);opacity:1}}
-#reveal .card .hero{height:260px;background-size:cover;background-position:center;
-  position:relative;background-color:#1a2028}
+#reveal .card .hero{height:clamp(180px,32vh,260px);background-size:cover;background-position:center top;
+  position:relative;background-color:#1a2028;background-image:linear-gradient(135deg,#2a3440,#151b23)}
 #reveal .card .hero::after{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,transparent 40%,#0d1318 100%)}
 #reveal .card .lvPill{position:absolute;top:16px;right:16px;z-index:2;
   padding:6px 14px;border-radius:14px;font-size:11px;letter-spacing:.2em;font-weight:600;color:#fff;
   backdrop-filter:blur(8px)}
-#reveal .card .body{padding:10px 28px 28px;text-align:center;position:relative;z-index:2}
+#reveal .card .body{padding:14px 24px 24px;text-align:center;position:relative;z-index:2}
 #reveal .card .tag{font-size:10px;letter-spacing:.35em;color:var(--gold);margin-bottom:8px;opacity:.8}
-#reveal .card .name{font-family:"Noto Serif SC",serif;font-size:34px;color:var(--mist);letter-spacing:.1em;margin-bottom:8px;font-weight:500}
+#reveal .card .name{font-family:"Noto Serif SC",serif;font-size:clamp(26px,4.2vh,34px);color:var(--mist);letter-spacing:.1em;margin-bottom:6px;font-weight:500;line-height:1.2}
 #reveal .card .la{font-style:italic;font-size:13px;color:var(--mist-dim);margin-bottom:16px;letter-spacing:.05em}
 #reveal .card .prov{display:inline-block;padding:6px 14px;border-radius:12px;
   background:rgba(200,160,87,.08);border:1px solid rgba(200,160,87,.25);
@@ -615,13 +619,36 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
 #reveal .close{position:absolute;top:24px;right:24px;width:40px;height:40px;border-radius:50%;
   border:1px solid rgba(200,160,87,.3);background:rgba(15,20,25,.6);color:var(--mist);
   cursor:pointer;font-size:16px;backdrop-filter:blur(10px)}
-#reveal .badge-stamp{position:absolute;top:-18px;left:50%;transform:translateX(-50%) rotate(-6deg);
+#reveal .badge-stamp{position:absolute;top:14px;left:50%;transform:translateX(-50%) rotate(-6deg);
   padding:6px 16px;background:linear-gradient(135deg,#C8A057,#8E6B2E);border-radius:20px;
   color:#fff;font-size:10px;letter-spacing:.35em;font-weight:600;
   box-shadow:0 8px 20px rgba(200,160,87,.4);z-index:3;
   opacity:0;animation:stampIn .6s var(--ease-cine) 1.1s forwards}
 @keyframes stampIn{from{transform:translateX(-50%) rotate(-20deg) scale(1.6);opacity:0}
   to{transform:translateX(-50%) rotate(-6deg) scale(1);opacity:1}}
+
+
+/* v14.7 适配 */
+@media (max-height:760px){
+  #reveal .card .hero{height:clamp(150px,26vh,200px)}
+  #reveal .card .stat{margin-bottom:14px}
+  #reveal .card .la{margin-bottom:10px}
+  #reveal .card .prov{margin-bottom:12px}
+  #reveal .badge-stamp{top:10px;padding:5px 13px;font-size:9px}
+}
+@media (max-width:480px){
+  #reveal .card{width:92vw}
+  #reveal .card .name{font-size:26px}
+  #reveal .card .body{padding:10px 18px 20px}
+  #reveal .card .acts button{padding:10px;font-size:11px;letter-spacing:.18em}
+  #reveal .close{top:14px;right:14px;width:36px;height:36px}
+}
+@media (max-height:640px){
+  #reveal .card .stat{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+  #reveal .card .stat .n{font-size:18px}
+  #reveal .card .divider{margin:8px 0 10px}
+  #reveal .card .tag{margin-bottom:4px}
+}
 
 </style>
 </head>
@@ -839,7 +866,7 @@ const P={
 /* ===== v14.5 物种扩展包 ===== */
 const EXTRA={
   "北京市":[{n:"中华斑羚",la:"Naemorhedus griseus",lv:"VU",c:"ungulate",img:null,d:"华北山地岩壁间攀援的中型偶蹄类,密云雾灵山有分布。"}],
-  "河北省":[{n:"黑鹳",la:"Ciconia nigra",lv:"VU",c:"bird",img:null,d:"拒马河和野三坡为重要栖息地,中国北方稀有涉禽。"}],
+  "河北省":[{n:"黑鹳",la:"Ciconia nigra",lv:"VU",c:"bird",img:IMG.hg,d:"拒马河和野三坡为重要栖息地,中国北方稀有涉禽。"}],
   "吉林省":[{n:"紫貂",la:"Martes zibellina",lv:"VU",c:"mammal",img:null,d:"长白山原始针叶林中夜行猎手,皮毛为其带来长期威胁。"}],
   "黑龙江省":[{n:"紫貂",la:"Martes zibellina",lv:"VU",c:"mammal",img:null,d:"大小兴安岭是最主要栖息区,国家一级保护动物。"},
              {n:"白尾海雕",la:"Haliaeetus albicilla",lv:"VU",c:"bird",img:null,d:"欧亚大陆最大猛禽之一,三江平原为越冬地。"}],
@@ -847,13 +874,13 @@ const EXTRA={
                 {n:"草原雕",la:"Aquila nipalensis",lv:"EN",c:"bird",img:null,d:"大型猛禽,依赖健康鼠兔种群维持生存。"}],
   "辽宁省":[{n:"黑脸琵鹭",la:"Platalea minor",lv:"EN",c:"bird",img:null,d:"辽东湾是其繁殖地,全球不足7000只。"}],
   "上海市":[{n:"黄胸鹀",la:"Emberiza aureola",lv:"CR",c:"bird",img:null,d:"曾遍布东亚的小型鸣禽,被捕猎食致种群崩溃。"}],
-  "江苏省":[{n:"长江江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:null,d:"南京长江段仍有稳定种群,被誉为'长江微笑'。"}],
-  "浙江省":[{n:"黄腹角雉",la:"Tragopan caboti",lv:"VU",c:"bird",img:null,d:"乌岩岭是其核心保护区,中国特有美丽雉类。"},
+  "江苏省":[{n:"长江江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:IMG.jt,d:"南京长江段仍有稳定种群,被誉为'长江微笑'。"}],
+  "浙江省":[{n:"黄腹角雉",la:"Tragopan caboti",lv:"VU",c:"bird",img:IMG.hf,d:"乌岩岭是其核心保护区,中国特有美丽雉类。"},
            {n:"江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:null,d:"舟山海域仍有少量海洋亚种出没。"}],
-  "安徽省":[{n:"长江江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:null,d:"安庆至铜陵江段是稳定栖息区。"}],
+  "安徽省":[{n:"长江江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:IMG.jt,d:"安庆至铜陵江段是稳定栖息区。"}],
   "福建省":[{n:"勺嘴鹬",la:"Calidris pygmaea",lv:"CR",c:"bird",img:null,d:"福建闽江口湿地是重要迁徙停歇地。"}],
   "江西省":[{n:"中华秋沙鸭",la:"Mergus squamatus",lv:"EN",c:"bird",img:null,d:"婺源冬季可观察到野生种群越冬。"}],
-  "山东省":[{n:"斑海豹",la:"Phoca largha",lv:"NT",c:"mammal",img:null,d:"庙岛群岛是黄渤海种群的核心繁殖区。"}],
+  "山东省":[{n:"斑海豹",la:"Phoca largha",lv:"NT",c:"mammal",img:IMG.hb,d:"庙岛群岛是黄渤海种群的核心繁殖区。"}],
   "河南省":[{n:"中华秋沙鸭",la:"Mergus squamatus",lv:"EN",c:"bird",img:null,d:"河南黄河湿地有越冬记录,国家一级保护动物。"}],
   "湖北省":[{n:"神农架金丝猴",la:"Rhinopithecus roxellana hubeiensis",lv:"EN",c:"primate",img:null,d:"神农架特有亚种,种群约1400只。"}],
   "湖南省":[{n:"白颈长尾雉",la:"Syrmaticus ellioti",lv:"VU",c:"bird",img:null,d:"华南山林稀有雉类,中国特有。"}],
@@ -1612,7 +1639,14 @@ endCine=function(){_origEnd();setTimeout(updateFab,400)};
     const lv=document.getElementById('rev-lv');
     lv.innerText=LVT[data.lv]||data.lv;lv.style.background=LVC[data.lv]||'#555';
     const hero=document.getElementById('rev-hero');
-    hero.style.backgroundImage=data.img?`url('${data.img}')`:'linear-gradient(135deg,#2a3440,#0d1318)';
+    if(data.img){
+      hero.style.backgroundImage=`url('${data.img}')`;
+      hero.style.backgroundColor='#1a2028';
+      /* 图片加载失败时的兜底 */
+      const _im=new Image();_im.onerror=()=>{hero.style.backgroundImage=`linear-gradient(135deg,${LVC[data.lv]||'#3E7C5C'}33,#0d1318)`};_im.src=data.img;
+    }else{
+      hero.style.backgroundImage=`linear-gradient(135deg,${LVC[data.lv]||'#3E7C5C'}33,#0d1318)`;
+    }
     document.getElementById('rev-u').innerText=u;
     document.getElementById('rev-t').innerText=t;
     document.getElementById('rev-pct').innerText=(t?Math.round(u/t*100):0)+'%';
