@@ -518,6 +518,111 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
 .src-note{font-size:10px;color:var(--mist-low);letter-spacing:.2em;margin-top:18px;
   padding-top:12px;border-top:1px solid rgba(200,160,87,.1);font-style:italic}
 .src-note b{color:var(--gold-deep);font-style:normal;font-weight:600}
+
+/* ====== v14.6 解锁仪式 ====== */
+.im-final .unlock-wrap{margin:0 auto 56px;max-width:520px;padding:48px 32px 44px;
+  background:linear-gradient(180deg,rgba(200,160,87,.06),rgba(200,160,87,.02));
+  border:1px solid rgba(200,160,87,.22);border-radius:20px;
+  box-shadow:inset 0 0 60px rgba(200,160,87,.06);position:relative;overflow:hidden}
+.im-final .unlock-wrap::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% -10%,rgba(200,160,87,.18),transparent 60%)}
+.im-final .u-hint{font-size:12px;color:var(--mist-dim);letter-spacing:.2em;margin-bottom:18px}
+.im-final .u-hint b{color:var(--gold);font-weight:500}
+.im-final h3{font-family:"Noto Serif SC",serif;font-size:32px;color:var(--mist);
+  margin-bottom:14px;letter-spacing:.22em;font-weight:500}
+.im-final .u-sub{margin-top:22px;font-size:10px;color:var(--mist-dim);letter-spacing:.32em;opacity:.6}
+.cta-unlock{position:relative;display:inline-flex;align-items:center;gap:14px;
+  padding:20px 56px;border-radius:40px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#C8A057 0%,#8E6B2E 100%);
+  color:#fff;font-size:15px;letter-spacing:.4em;font-weight:600;
+  box-shadow:0 12px 36px rgba(200,160,87,.35),inset 0 1px 0 rgba(255,255,255,.3);
+  transition:transform .25s var(--ease-cine),box-shadow .25s;overflow:hidden;margin-top:8px}
+.cta-unlock:hover{transform:translateY(-2px);box-shadow:0 20px 48px rgba(200,160,87,.55),inset 0 1px 0 rgba(255,255,255,.4)}
+.cta-unlock:active{transform:translateY(0) scale(.98)}
+.cta-unlock .lock{font-size:18px;transition:transform .5s var(--ease-cine)}
+.cta-unlock.unlocking .lock{transform:rotate(-35deg) translateY(-4px)}
+.cta-unlock .ripple{position:absolute;width:20px;height:20px;border-radius:50%;
+  background:rgba(255,255,255,.6);opacity:0;transform:scale(0);pointer-events:none;left:50%;top:50%;margin:-10px 0 0 -10px}
+.cta-unlock.unlocking .ripple{animation:ripple 1s ease-out forwards}
+@keyframes ripple{0%{transform:scale(0);opacity:.8}100%{transform:scale(40);opacity:0}}
+.cta-unlock.done{background:linear-gradient(135deg,#3E7C5C,#2A5540);pointer-events:none}
+.cta-unlock.done .lock{transform:rotate(0);content:"✓"}
+
+/* Reveal Overlay */
+#reveal{position:fixed;inset:0;z-index:2500;display:none;
+  background:radial-gradient(circle at 50% 50%,rgba(15,20,25,.88),rgba(5,8,12,.98));
+  backdrop-filter:blur(20px);opacity:0;transition:opacity .5s var(--ease-cine);
+  align-items:center;justify-content:center}
+#reveal.show{display:flex;opacity:1}
+#reveal .rays{position:absolute;inset:0;pointer-events:none;
+  background:conic-gradient(from 0deg at 50% 50%,
+    rgba(200,160,87,0) 0deg,rgba(200,160,87,.16) 8deg,rgba(200,160,87,0) 16deg,
+    rgba(200,160,87,0) 36deg,rgba(200,160,87,.12) 44deg,rgba(200,160,87,0) 52deg,
+    rgba(200,160,87,0) 80deg,rgba(200,160,87,.18) 88deg,rgba(200,160,87,0) 96deg,
+    rgba(200,160,87,0) 140deg,rgba(200,160,87,.14) 148deg,rgba(200,160,87,0) 156deg,
+    rgba(200,160,87,0) 200deg,rgba(200,160,87,.12) 208deg,rgba(200,160,87,0) 216deg,
+    rgba(200,160,87,0) 260deg,rgba(200,160,87,.16) 268deg,rgba(200,160,87,0) 276deg,
+    rgba(200,160,87,0) 320deg,rgba(200,160,87,.14) 328deg,rgba(200,160,87,0) 336deg,
+    rgba(200,160,87,0) 360deg);
+  opacity:0;transform:scale(.6);animation:rayIn 1.4s var(--ease-cine) .1s forwards,raySpin 22s linear .6s infinite}
+@keyframes rayIn{to{opacity:.9;transform:scale(1.2)}}
+@keyframes raySpin{from{filter:hue-rotate(0)}to{filter:hue-rotate(30deg)}}
+#reveal .halo{position:absolute;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,160,87,.35),transparent 60%);
+  opacity:0;animation:haloIn .9s var(--ease-cine) .2s forwards}
+@keyframes haloIn{to{opacity:1;transform:scale(1.15)}}
+#reveal .particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+#reveal .particles i{position:absolute;width:4px;height:4px;border-radius:50%;
+  background:var(--gold);box-shadow:0 0 12px var(--gold);opacity:0}
+#reveal.show .particles i{animation:rise 2.4s ease-out forwards}
+@keyframes rise{0%{opacity:0;transform:translateY(0) scale(.4)}
+  10%{opacity:1}
+  100%{opacity:0;transform:translateY(-340px) scale(1.2)}}
+
+#reveal .card{position:relative;width:min(420px,85vw);padding:0;border-radius:24px;
+  background:linear-gradient(180deg,#1a2028,#0d1318);
+  border:1px solid rgba(200,160,87,.35);
+  box-shadow:0 40px 120px rgba(0,0,0,.7),inset 0 1px 0 rgba(200,160,87,.2),
+    0 0 80px rgba(200,160,87,.25);
+  transform:scale(.7) translateY(40px);opacity:0;
+  animation:cardIn .9s var(--ease-cine) .5s forwards;overflow:hidden}
+@keyframes cardIn{to{transform:scale(1) translateY(0);opacity:1}}
+#reveal .card .hero{height:260px;background-size:cover;background-position:center;
+  position:relative;background-color:#1a2028}
+#reveal .card .hero::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,#0d1318 100%)}
+#reveal .card .lvPill{position:absolute;top:16px;right:16px;z-index:2;
+  padding:6px 14px;border-radius:14px;font-size:11px;letter-spacing:.2em;font-weight:600;color:#fff;
+  backdrop-filter:blur(8px)}
+#reveal .card .body{padding:10px 28px 28px;text-align:center;position:relative;z-index:2}
+#reveal .card .tag{font-size:10px;letter-spacing:.35em;color:var(--gold);margin-bottom:8px;opacity:.8}
+#reveal .card .name{font-family:"Noto Serif SC",serif;font-size:34px;color:var(--mist);letter-spacing:.1em;margin-bottom:8px;font-weight:500}
+#reveal .card .la{font-style:italic;font-size:13px;color:var(--mist-dim);margin-bottom:16px;letter-spacing:.05em}
+#reveal .card .prov{display:inline-block;padding:6px 14px;border-radius:12px;
+  background:rgba(200,160,87,.08);border:1px solid rgba(200,160,87,.25);
+  color:var(--mist);font-size:11px;letter-spacing:.25em;margin-bottom:20px}
+#reveal .card .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(200,160,87,.4),transparent);margin:12px 0 18px}
+#reveal .card .stat{display:flex;justify-content:space-around;margin-bottom:22px}
+#reveal .card .stat>div{text-align:center}
+#reveal .card .stat .n{font-family:"Noto Serif SC",serif;font-size:20px;color:var(--gold);margin-bottom:4px}
+#reveal .card .stat .l{font-size:10px;color:var(--mist-dim);letter-spacing:.22em}
+#reveal .card .acts{display:flex;gap:10px;margin-top:4px}
+#reveal .card .acts button{flex:1;padding:12px;border-radius:24px;border:1px solid rgba(200,160,87,.3);
+  background:rgba(255,255,255,.02);color:var(--mist);font-size:12px;letter-spacing:.25em;cursor:pointer;
+  transition:all .25s}
+#reveal .card .acts button.primary{background:linear-gradient(135deg,#C8A057,#8E6B2E);border-color:transparent;color:#fff;font-weight:600}
+#reveal .card .acts button:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.4)}
+#reveal .close{position:absolute;top:24px;right:24px;width:40px;height:40px;border-radius:50%;
+  border:1px solid rgba(200,160,87,.3);background:rgba(15,20,25,.6);color:var(--mist);
+  cursor:pointer;font-size:16px;backdrop-filter:blur(10px)}
+#reveal .badge-stamp{position:absolute;top:-18px;left:50%;transform:translateX(-50%) rotate(-6deg);
+  padding:6px 16px;background:linear-gradient(135deg,#C8A057,#8E6B2E);border-radius:20px;
+  color:#fff;font-size:10px;letter-spacing:.35em;font-weight:600;
+  box-shadow:0 8px 20px rgba(200,160,87,.4);z-index:3;
+  opacity:0;animation:stampIn .6s var(--ease-cine) 1.1s forwards}
+@keyframes stampIn{from{transform:translateX(-50%) rotate(-20deg) scale(1.6);opacity:0}
+  to{transform:translateX(-50%) rotate(-6deg) scale(1);opacity:1}}
+
 </style>
 </head>
 <body>
@@ -621,7 +726,7 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
 <div class="p-desc" id="p-desc"></div>
 <div class="p-video" id="p-video"></div>
 <div class="p-count" id="p-count"></div>
-<div class="p-deep" id="p-deep"><span>深入了解</span><span class="arr">→</span></div>
+<div class="p-deep" id="p-deep"><span>深入了解 · 解锁图鉴</span><span class="arr">→</span></div>
 </div></div>
 
 <!-- ===== L3 Immersive 长页 ===== -->
@@ -1178,8 +1283,17 @@ function buildImmersive(animal,provName,terrainKey){
   </section>
 
   <section class="im-final">
-    <h3>每一次看见 · 都是一次守护</h3>
-    <div class="msg">在抖音观看 ${a.n} 的真实影像，把这份守望传递给下一个人。</div>
+    <div class="unlock-wrap" id="uw-${a.n}">
+      <div class="u-hint">您已看完 <b>${a.n}</b> 的完整档案</div>
+      <h3>授予守护徽章</h3>
+      <div class="msg">每一次阅读都是一次声援 — 请按下按钮,把它正式录入您的图鉴。</div>
+      <button class="cta-unlock" data-unlock="${a.n}" data-lv="${a.lv}" data-la="${a.la}" data-img="${a.img||''}" data-prov="${provName}">
+        <span class="lock">🔒</span>
+        <span class="txt">解 锁 图 鉴</span>
+        <span class="ripple"></span>
+      </button>
+      <div class="u-sub">UNLOCK TO ATLAS · ${a.la}</div>
+    </div>
     <div class="ctas">
       <a class="cta-dy" href="${dyUrl}" target="_blank" rel="noopener noreferrer">
         <svg width="16" height="16" viewBox="0 0 48 48" fill="none"><path d="M21.4 4h6.2c-.2 5.4 3.4 10.4 9.4 11.2v6.6c-3.4.2-6.4-1-9-2.8v12.8c0 10-10.8 15.2-18.2 9.4-4.8-3.8-6.4-11.2-2.8-16.8 3.8-5.8 12-7 16.4-3.4v7c-1-.6-2.2-.8-3.2-.8-2.8.2-5 2.6-4.6 5.6.4 3.2 3.6 5 6.6 4 2.4-.8 4-3.2 4-5.8V4h-4.8z" fill="#fff"/></svg>
@@ -1425,19 +1539,7 @@ document.getElementById('share-dl').addEventListener('click',()=>{
   const a=document.createElement('a');a.download='万物共生-守护图鉴.png';a.href=cvs.toDataURL('image/png');a.click();
 });
 
-/* 打开物种时自动解锁 */
-const _origShowP=showP;
-showP=function(prov,terrain){
-  _origShowP(prov,terrain);
-  const pd=P[prov];if(!pd)return;
-  /* 先显示当前物种解锁 */
-  if(pd.animals[0])setTimeout(()=>unlockSpecies(pd.animals[0].n),400);
-};
-const _origRender=renderAnimal;
-renderAnimal=function(idx){
-  _origRender(idx);
-  const a=curAnimals[idx];if(a)setTimeout(()=>unlockSpecies(a.n),200);
-};
+/* v14.6: 不再在浏览/点击 tooltip 时自动解锁,仅在用户主动按下『解锁图鉴』按钮时解锁 */
 
 /* FAB 初始化显示:等开场结束后 */
 const _origEnd=endCine;
@@ -1482,6 +1584,103 @@ endCine=function(){_origEnd();setTimeout(updateFab,400)};
   note.innerHTML='数据来源 · <b>IUCN</b> · <b>国家重点保护野生动物名录</b>';
   body.appendChild(note);
 })();
+
+/* ================== v14.6 解锁仪式 ================== */
+(function(){
+  const LVC={CR:'#C0392B',EN:'#D47A3A',VU:'#B9923B',NT:'#3F7A89'};
+  const LVT={CR:'CR · 极危',EN:'EN · 濒危',VU:'VU · 易危',NT:'NT · 近危'};
+
+  function spawnParticles(){
+    const box=document.getElementById('rev-particles');
+    box.innerHTML='';
+    for(let i=0;i<24;i++){
+      const p=document.createElement('i');
+      p.style.left=(10+Math.random()*80)+'%';
+      p.style.top=(50+Math.random()*30)+'%';
+      p.style.animationDelay=(Math.random()*0.8)+'s';
+      p.style.animationDuration=(1.8+Math.random()*1.4)+'s';
+      const sz=2+Math.random()*4;p.style.width=sz+'px';p.style.height=sz+'px';
+      box.appendChild(p);
+    }
+  }
+
+  function showReveal(data){
+    const u=unlockedSet.size,t=ALL_SPECIES.length;
+    document.getElementById('rev-name').innerText=data.n;
+    document.getElementById('rev-la').innerText=data.la||'';
+    document.getElementById('rev-prov').innerText=data.prov||'';
+    const lv=document.getElementById('rev-lv');
+    lv.innerText=LVT[data.lv]||data.lv;lv.style.background=LVC[data.lv]||'#555';
+    const hero=document.getElementById('rev-hero');
+    hero.style.backgroundImage=data.img?`url('${data.img}')`:'linear-gradient(135deg,#2a3440,#0d1318)';
+    document.getElementById('rev-u').innerText=u;
+    document.getElementById('rev-t').innerText=t;
+    document.getElementById('rev-pct').innerText=(t?Math.round(u/t*100):0)+'%';
+    spawnParticles();
+    document.getElementById('reveal').classList.add('show');
+  }
+  function hideReveal(){document.getElementById('reveal').classList.remove('show')}
+
+  document.getElementById('rev-close').addEventListener('click',hideReveal);
+  document.getElementById('rev-continue').addEventListener('click',()=>{hideReveal();closeImmersive()});
+  document.getElementById('rev-atlas').addEventListener('click',()=>{hideReveal();closeImmersive();setTimeout(openAtlas,320)});
+
+  /* 事件委托: 长页内的 .cta-unlock */
+  document.addEventListener('click',function(e){
+    const btn=e.target.closest('.cta-unlock');
+    if(!btn||btn.classList.contains('done'))return;
+    const name=btn.dataset.unlock;
+    const data={n:name,lv:btn.dataset.lv,la:btn.dataset.la,img:btn.dataset.img,prov:btn.dataset.prov};
+    btn.classList.add('unlocking');
+    /* 修改锁图标 */
+    const lockEl=btn.querySelector('.lock');
+    setTimeout(()=>{if(lockEl)lockEl.innerText='🔓'},180);
+    setTimeout(()=>{
+      btn.classList.remove('unlocking');btn.classList.add('done');
+      btn.querySelector('.txt').innerText='已 录 入 图 鉴';
+      if(lockEl)lockEl.innerText='✓';
+      /* 正式解锁 */
+      const isNew=unlockSpecies(name);
+      showReveal(data);
+    },780);
+  });
+
+  /* ESC 关闭 reveal */
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&document.getElementById('reveal').classList.contains('show'))hideReveal();
+  });
+})();
+
 </script>
+
+<!-- v14.6 Reveal Overlay -->
+<div id="reveal">
+  <div class="rays"></div>
+  <div class="halo"></div>
+  <div class="particles" id="rev-particles"></div>
+  <button class="close" id="rev-close">✕</button>
+  <div class="card" id="rev-card">
+    <div class="hero" id="rev-hero"></div>
+    <div class="badge-stamp">NEW · 守护徽章</div>
+    <div class="lvPill" id="rev-lv"></div>
+    <div class="body">
+      <div class="tag">已 录 入 图 鉴</div>
+      <div class="name" id="rev-name"></div>
+      <div class="la" id="rev-la"></div>
+      <div class="prov" id="rev-prov"></div>
+      <div class="divider"></div>
+      <div class="stat">
+        <div><div class="n" id="rev-u">0</div><div class="l">已解锁</div></div>
+        <div><div class="n" id="rev-t">0</div><div class="l">总物种</div></div>
+        <div><div class="n" id="rev-pct">0%</div><div class="l">完成度</div></div>
+      </div>
+      <div class="acts">
+        <button id="rev-atlas">查看图鉴</button>
+        <button class="primary" id="rev-continue">继续探索</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
