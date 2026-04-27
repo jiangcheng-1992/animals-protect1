@@ -29,63 +29,116 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
   radial-gradient(ellipse at 50% 55%,#1B2028 0%,#0A0D12 65%,#05080C 100%);
   display:flex;align-items:center;justify-content:center;flex-direction:column;
   overflow:hidden;pointer-events:none}
-#cine.fadeout{animation:cineOut 1.4s var(--ease-cine) forwards}
-@keyframes cineOut{to{opacity:0;visibility:hidden}}
+#cine.fadeout{animation:cineOut 1.8s var(--ease-cine) forwards}
+@keyframes cineOut{to{opacity:0;visibility:hidden;transform:scale(1.04)}}
 
 /* 粒子星尘背景 */
 #cine::before,#cine::after{content:"";position:absolute;inset:-20%;
   background-image:
-    radial-gradient(1px 1px at 20% 30%,rgba(200,160,87,.5) 50%,transparent 52%),
-    radial-gradient(1px 1px at 80% 20%,rgba(231,226,214,.35) 50%,transparent 52%),
-    radial-gradient(1px 1px at 50% 70%,rgba(200,160,87,.4) 50%,transparent 52%),
-    radial-gradient(1px 1px at 30% 85%,rgba(231,226,214,.3) 50%,transparent 52%),
-    radial-gradient(1px 1px at 65% 50%,rgba(200,160,87,.3) 50%,transparent 52%),
-    radial-gradient(1px 1px at 90% 75%,rgba(231,226,214,.4) 50%,transparent 52%);
-  background-size:600px 600px;opacity:0;animation:dust 3.2s var(--ease-cine) .8s forwards}
-#cine::after{background-size:420px 420px;animation-delay:1s;animation-duration:3s}
-@keyframes dust{0%{opacity:0;transform:scale(1.1)}100%{opacity:.9;transform:scale(1)}}
+    radial-gradient(1.5px 1.5px at 20% 30%,rgba(200,160,87,.7) 50%,transparent 52%),
+    radial-gradient(1px 1px at 80% 20%,rgba(231,226,214,.55) 50%,transparent 52%),
+    radial-gradient(1.2px 1.2px at 50% 70%,rgba(200,160,87,.6) 50%,transparent 52%),
+    radial-gradient(1px 1px at 30% 85%,rgba(231,226,214,.5) 50%,transparent 52%),
+    radial-gradient(1.2px 1.2px at 65% 50%,rgba(200,160,87,.5) 50%,transparent 52%),
+    radial-gradient(1px 1px at 90% 75%,rgba(231,226,214,.6) 50%,transparent 52%);
+  background-size:600px 600px;opacity:0;animation:dust 4.8s var(--ease-cine) .4s forwards}
+#cine::after{background-size:420px 420px;animation-delay:.8s;animation-duration:5s;filter:blur(.5px)}
+@keyframes dust{0%{opacity:0;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
 
-/* 朱鹮剪影飞过 */
-.bird{position:absolute;left:-15%;top:32%;width:110px;height:70px;opacity:0;
-  animation:flyBy 4.2s var(--ease-cine) .2s forwards;filter:drop-shadow(0 0 18px rgba(200,160,87,.55))}
-.bird svg{width:100%;height:100%}
-.bird .wing{transform-origin:50% 50%;animation:flap 1.1s ease-in-out infinite}
-@keyframes flyBy{
-  0%{left:-15%;top:38%;opacity:0;transform:scale(.55) rotate(-4deg)}
-  15%{opacity:1}
-  50%{left:50%;top:22%;transform:scale(.8) rotate(2deg)}
-  85%{opacity:.85}
-  100%{left:115%;top:18%;opacity:0;transform:scale(.9) rotate(5deg)}
+/* 中央金日光晕 */
+.cine-sun{position:absolute;left:50%;top:50%;width:0;height:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(244,229,184,.6) 0%,rgba(200,160,87,.35) 30%,transparent 70%);
+  transform:translate(-50%,-50%);pointer-events:none;z-index:1;
+  animation:sunRise 3.6s var(--ease-cine) .3s forwards}
+@keyframes sunRise{
+  0%{width:0;height:0;opacity:0}
+  40%{opacity:1}
+  100%{width:900px;height:900px;opacity:.85}
 }
-@keyframes flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.55)}}
+.cine-sun2{position:absolute;left:50%;top:50%;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(244,229,184,.22) 0%,transparent 70%);
+  transform:translate(-50%,-50%) scale(0);pointer-events:none;z-index:1;
+  animation:sunPulse 3.2s ease-in-out 2.4s infinite}
+@keyframes sunPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.7}50%{transform:translate(-50%,-50%) scale(1.4);opacity:.4}}
+
+/* 水墨晕染圈 */
+.cine-ink{position:absolute;left:50%;top:50%;width:80px;height:80px;border-radius:50%;
+  border:1px solid rgba(200,160,87,.4);transform:translate(-50%,-50%) scale(0);
+  pointer-events:none;z-index:1;opacity:0}
+.cine-ink.i1{animation:inkOut 4s var(--ease-cine) 1.2s forwards}
+.cine-ink.i2{animation:inkOut 4s var(--ease-cine) 1.8s forwards}
+.cine-ink.i3{animation:inkOut 4s var(--ease-cine) 2.4s forwards}
+@keyframes inkOut{
+  0%{transform:translate(-50%,-50%) scale(.2);opacity:.8;border-width:2px}
+  100%{transform:translate(-50%,-50%) scale(14);opacity:0;border-width:.5px}
+}
+
+/* 朱鹮剪影飞过 — 放大、飞得更戏剧、带光尾 */
+.bird{position:absolute;left:-20%;top:42%;width:180px;height:110px;opacity:0;
+  animation:flyBy 6.4s var(--ease-cine) .6s forwards;
+  filter:drop-shadow(0 0 28px rgba(244,229,184,.85)) drop-shadow(0 0 12px rgba(200,160,87,.7));
+  z-index:3}
+.bird svg{width:100%;height:100%}
+.bird .wing{transform-origin:50% 50%;animation:flap .85s ease-in-out infinite}
+.bird::after{content:"";position:absolute;right:80%;top:50%;width:180px;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(244,229,184,.7),rgba(200,160,87,.3));
+  transform:translateY(-50%);opacity:.8;filter:blur(1px)}
+@keyframes flyBy{
+  0%{left:-20%;top:52%;opacity:0;transform:scale(.5) rotate(-8deg)}
+  12%{opacity:1;transform:scale(.7) rotate(-4deg)}
+  35%{left:30%;top:35%;transform:scale(.95) rotate(-2deg);opacity:1}
+  55%{left:52%;top:28%;transform:scale(1.1) rotate(1deg);opacity:.95}
+  75%{left:78%;top:22%;transform:scale(1.05) rotate(4deg);opacity:.85}
+  100%{left:122%;top:14%;opacity:0;transform:scale(1) rotate(8deg)}
+}
+@keyframes flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.45)}}
+
+/* 第二只朱鹮(跟随) */
+.bird.b2{top:48%;animation-delay:1.4s;animation-duration:6s;opacity:0;
+  transform:scale(.6);filter:drop-shadow(0 0 20px rgba(200,160,87,.7))}
+.bird.b2::after{display:none}
 
 /* 品牌标题 */
 .brand{text-align:center;position:relative;z-index:2}
 .brand .logo-line{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 50%,transparent);
-  margin:0 auto 22px;animation:lineGrow 1.2s var(--ease-cine) 1.6s forwards}
-@keyframes lineGrow{to{width:200px}}
+  margin:0 auto 28px;animation:lineGrow 1.8s var(--ease-cine) 2.4s forwards;
+  box-shadow:0 0 20px rgba(200,160,87,.6)}
+@keyframes lineGrow{to{width:260px}}
 .brand h1{font-family:"Noto Serif SC","Songti SC",serif;font-weight:500;
-  font-size:clamp(44px,7vw,88px);letter-spacing:.28em;color:var(--mist);
-  opacity:0;transform:translateY(18px);
-  animation:titleIn 1.6s var(--ease-cine) 1.9s forwards;
-  text-shadow:0 0 40px rgba(200,160,87,.25)}
-.brand h1 .glow{background:linear-gradient(180deg,#F4E5B8 0%,var(--gold) 55%,var(--gold-deep) 100%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding:0 .08em}
-@keyframes titleIn{to{opacity:1;transform:translateY(0)}}
-.brand .tag{margin-top:22px;font-size:14px;letter-spacing:.6em;color:var(--gold-soft);
-  opacity:0;animation:tagIn 1.2s var(--ease-cine) 2.8s forwards;font-weight:300}
+  font-size:clamp(48px,7.5vw,96px);letter-spacing:.32em;color:var(--mist);
+  opacity:0;transform:translateY(30px) scale(.92);
+  animation:titleIn 2.2s var(--ease-cine) 2.7s forwards,titleBreath 4s ease-in-out 5s infinite;
+  text-shadow:0 0 60px rgba(200,160,87,.45),0 0 24px rgba(244,229,184,.3)}
+.brand h1 .glow{background:linear-gradient(180deg,#F8EBC6 0%,var(--gold) 55%,var(--gold-deep) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding:0 .08em;
+  filter:drop-shadow(0 0 18px rgba(244,229,184,.5))}
+@keyframes titleIn{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes titleBreath{0%,100%{text-shadow:0 0 60px rgba(200,160,87,.45),0 0 24px rgba(244,229,184,.3)}
+  50%{text-shadow:0 0 90px rgba(200,160,87,.7),0 0 40px rgba(244,229,184,.5)}}
+.brand .tag{margin-top:28px;font-size:15px;letter-spacing:.72em;color:var(--gold-soft);
+  opacity:0;animation:tagIn 1.6s var(--ease-cine) 4s forwards;font-weight:300}
 .brand .tag::before,.brand .tag::after{content:"·";margin:0 .8em;color:var(--gold-deep)}
-@keyframes tagIn{to{opacity:.95}}
-.brand .sub{margin-top:16px;font-size:11px;letter-spacing:.35em;color:var(--mist-low);
-  opacity:0;animation:tagIn 1.2s var(--ease-cine) 3.3s forwards}
+@keyframes tagIn{to{opacity:.98}}
+.brand .sub{margin-top:20px;font-size:12px;letter-spacing:.4em;color:var(--mist-low);
+  opacity:0;animation:tagIn 1.4s var(--ease-cine) 4.8s forwards}
+
+/* 诗意字幕条 */
+.cine-poem{position:absolute;bottom:120px;left:0;right:0;text-align:center;
+  font-family:"Noto Serif SC",serif;font-size:13px;letter-spacing:.5em;color:var(--mist-dim);
+  opacity:0;animation:poemIn 1.6s var(--ease-cine) 5.4s forwards;z-index:2;pointer-events:none}
+.cine-poem::before,.cine-poem::after{content:"—";margin:0 1.2em;color:var(--gold-deep);opacity:.6}
+@keyframes poemIn{to{opacity:.85}}
 
 /* 底部进度与 skip */
-.cine-foot{position:absolute;bottom:36px;left:0;right:0;display:flex;flex-direction:column;
-  align-items:center;gap:10px;opacity:0;animation:tagIn 1s var(--ease-cine) 3.6s forwards}
-.cine-prog{width:180px;height:2px;background:rgba(200,160,87,.15);border-radius:2px;overflow:hidden}
-.cine-prog>i{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));
-  animation:progFill 2s var(--ease-cine) 3.6s forwards}
+.cine-foot{position:absolute;bottom:40px;left:0;right:0;display:flex;flex-direction:column;
+  align-items:center;gap:12px;opacity:0;animation:tagIn 1s var(--ease-cine) 5.2s forwards;z-index:2}
+.cine-prog{width:240px;height:2px;background:rgba(200,160,87,.15);border-radius:2px;overflow:hidden;
+  box-shadow:0 0 10px rgba(200,160,87,.2)}
+.cine-prog>i{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-soft),var(--gold));
+  background-size:200% 100%;
+  animation:progFill 2.4s var(--ease-cine) 5.2s forwards,progShine 2s linear 5.2s infinite}
 @keyframes progFill{to{width:100%}}
+@keyframes progShine{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .cine-skip{font-size:10px;letter-spacing:.3em;color:var(--mist-low);cursor:pointer;pointer-events:auto;
   padding:6px 14px;border:1px solid rgba(200,160,87,.18);border-radius:20px;transition:.3s;background:transparent;color:var(--mist-low)}
 .cine-skip:hover{color:var(--gold);border-color:var(--gold)}
@@ -159,8 +212,14 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
 .p-hero-wrap::after{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,transparent 40%,rgba(15,20,25,.85) 100%);pointer-events:none}
 .ph{display:flex;align-items:center;justify-content:center;height:200px;
-  color:var(--mist-low);font-size:11px;border-radius:14px 14px 0 0;background:var(--ink-2);
-  letter-spacing:.3em}
+  color:var(--mist-low);font-size:11px;border-radius:14px 14px 0 0;letter-spacing:.3em;
+  background:linear-gradient(135deg,#1f2832,#0f1419);
+  position:relative;overflow:hidden}
+.ph::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 30%,rgba(200,160,87,.12),transparent 60%)}
+.ph::after{content:"🐾";position:absolute;font-size:54px;opacity:.12;
+  top:50%;left:50%;transform:translate(-50%,-60%)}
+.ph>span{position:relative;z-index:2;opacity:.7}
 
 .p-tabs{display:flex;gap:0;overflow-x:auto;padding:0 14px;
   border-bottom:1px solid rgba(200,160,87,.12);position:relative;z-index:5}
@@ -650,12 +709,97 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
   #reveal .card .tag{margin-bottom:4px}
 }
 
+
+/* ================== v15 扩展 ================== */
+
+/* 右上语言切换 */
+#lang-sw{display:inline-flex;align-items:center;gap:0;margin-left:14px;
+  border:1px solid rgba(200,160,87,.25);border-radius:16px;overflow:hidden;
+  background:rgba(15,20,25,.6);backdrop-filter:blur(8px);height:28px}
+#lang-sw button{border:none;background:transparent;color:var(--mist-dim);
+  font-size:10px;letter-spacing:.2em;padding:0 12px;cursor:pointer;height:100%;
+  font-family:inherit;transition:.25s}
+#lang-sw button.on{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:#fff;font-weight:600}
+#lang-sw button:hover:not(.on){color:var(--gold)}
+
+/* 左下工具条 */
+#v15-tools{position:fixed;left:18px;bottom:18px;z-index:18;display:none;
+  gap:10px;flex-direction:column;opacity:0;transform:translateY(10px);
+  transition:opacity .8s var(--ease-cine) .4s,transform .8s var(--ease-cine) .4s}
+#v15-tools.reveal{display:flex;opacity:1;transform:translateY(0)}
+#v15-tools button{padding:11px 16px;border-radius:24px;border:1px solid var(--panel-bd);
+  background:var(--panel-bg);color:var(--mist);cursor:pointer;
+  font-size:11px;letter-spacing:.22em;font-family:inherit;backdrop-filter:blur(12px);
+  display:inline-flex;align-items:center;gap:8px;transition:.3s;text-align:left}
+#v15-tools button:hover{border-color:var(--gold);color:var(--gold);transform:translateX(3px);
+  box-shadow:0 8px 22px rgba(200,160,87,.18)}
+#v15-tools button .ico{font-size:14px}
+
+/* 时间轴弹层 */
+#timeline{position:fixed;inset:0;z-index:2200;display:none;
+  background:radial-gradient(ellipse at 50% 30%,rgba(15,20,25,.92),rgba(5,8,12,.98));
+  backdrop-filter:blur(18px);opacity:0;transition:opacity .6s var(--ease-cine)}
+#timeline.show{display:flex;opacity:1;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px}
+#timeline .tl-head{text-align:center;margin-bottom:28px}
+#timeline .tl-tag{font-size:10px;letter-spacing:.4em;color:var(--gold);margin-bottom:12px;opacity:.85}
+#timeline h2{font-family:"Noto Serif SC",serif;font-size:clamp(28px,4vw,42px);
+  color:var(--mist);letter-spacing:.24em;font-weight:500;margin:0 0 10px}
+#timeline .tl-sub{font-size:12px;color:var(--mist-dim);letter-spacing:.28em}
+#timeline .tl-wrap{position:relative;width:min(1100px,92vw);height:min(58vh,520px);
+  background:linear-gradient(180deg,rgba(200,160,87,.04),transparent);
+  border:1px solid rgba(200,160,87,.18);border-radius:20px;padding:36px 32px 28px;
+  box-shadow:inset 0 0 80px rgba(200,160,87,.05)}
+#timeline svg{width:100%;height:100%;overflow:visible}
+#timeline .tl-year{position:absolute;left:32px;bottom:24px;font-family:"Noto Serif SC",serif;
+  font-size:54px;color:var(--gold);letter-spacing:.08em;line-height:1;text-shadow:0 0 24px rgba(200,160,87,.4)}
+#timeline .tl-val{position:absolute;right:32px;bottom:24px;text-align:right}
+#timeline .tl-val .n{font-family:"Noto Serif SC",serif;font-size:46px;color:var(--mist);line-height:1}
+#timeline .tl-val .l{font-size:10px;color:var(--mist-dim);letter-spacing:.3em;margin-top:6px}
+#timeline .tl-ctrl{margin-top:24px;display:flex;align-items:center;gap:14px;
+  background:rgba(15,20,25,.6);border:1px solid var(--panel-bd);border-radius:30px;
+  padding:10px 22px;backdrop-filter:blur(10px)}
+#timeline .tl-play{width:36px;height:36px;border-radius:50%;border:1px solid var(--gold);
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:#fff;cursor:pointer;font-size:13px}
+#timeline .tl-slider{width:360px;max-width:40vw;-webkit-appearance:none;appearance:none;
+  height:2px;background:rgba(200,160,87,.25);border-radius:2px;outline:none}
+#timeline .tl-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;
+  border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 0 10px var(--gold)}
+#timeline .tl-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+  background:var(--gold);cursor:pointer;border:none}
+#timeline .tl-speed{font-size:10px;color:var(--mist-dim);letter-spacing:.2em;cursor:pointer;padding:4px 10px;
+  border-radius:12px;border:1px solid var(--panel-bd)}
+#timeline .tl-speed:hover{color:var(--gold);border-color:var(--gold)}
+#timeline .tl-close{position:absolute;top:28px;right:28px;width:40px;height:40px;border-radius:50%;
+  border:1px solid rgba(200,160,87,.25);background:rgba(15,20,25,.6);color:var(--mist);cursor:pointer;
+  backdrop-filter:blur(10px);font-size:16px}
+#timeline .tl-events{margin-top:18px;max-width:min(1100px,92vw);font-size:11px;color:var(--mist-dim);
+  letter-spacing:.15em;line-height:1.8;text-align:center;min-height:20px}
+#timeline .tl-events b{color:var(--gold-soft);font-weight:500}
+@media (max-width:720px){
+  #timeline{padding:30px 16px}
+  #timeline .tl-wrap{padding:24px 16px 18px;height:44vh}
+  #timeline .tl-year{font-size:36px;left:16px;bottom:14px}
+  #timeline .tl-val .n{font-size:30px}
+  #timeline .tl-slider{width:200px}
+}
+
+
 </style>
 </head>
 <body>
 <!-- ===== 6秒开场序幕 ===== -->
-<div id="cine">
+<div id="cine"><div class="cine-sun"></div><div class="cine-sun2"></div>
+  <div class="cine-ink i1"></div><div class="cine-ink i2"></div><div class="cine-ink i3"></div>
   <div class="bird">
+    <svg viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" stroke="#C8A057" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 40 Q25 10 42 30 Q52 38 58 36 Q68 32 76 20 Q88 8 102 18" class="wing"/>
+        <path d="M8 42 Q25 58 42 38 Q52 34 58 36 Q70 40 78 52 Q90 62 102 52" class="wing" opacity=".65"/>
+        <circle cx="55" cy="36" r="1.6" fill="#E2C27A"/>
+      </g>
+    </svg>
+  </div>
+<div class="bird b2">
     <svg viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg">
       <g fill="none" stroke="#C8A057" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M8 40 Q25 10 42 30 Q52 38 58 36 Q68 32 76 20 Q88 8 102 18" class="wing"/>
@@ -670,7 +814,8 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
     <div class="tag">中国濒危动物数字志</div>
     <div class="sub">THE LIVING ATLAS OF CHINA'S ENDANGERED SPECIES</div>
   </div>
-  <div class="cine-foot">
+  <div class="cine-poem">以万物之名 · 立时代之志</div>
+<div class="cine-foot">
     <div class="cine-prog"><i></i></div>
     <button class="cine-skip" id="cine-skip">跳过序幕 · SKIP</button>
   </div>
@@ -683,14 +828,15 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
     <span class="sub">34 省 · 100+ 物种 · 数字生态志</span>
   </div>
   <nav class="nav">
-    <a id="nav-explore">探索地图</a>
-    <a id="nav-about">关于项目</a>
+    <a id="nav-explore" data-i18n="nav.explore">探索地图</a>
+    <a id="nav-about" data-i18n="nav.about">关于项目</a>
+    <div id="lang-sw"><button data-lang="zh" class="on">中</button><button data-lang="en">EN</button></div>
   </nav>
 </div>
 
 <div class="ctrls" id="ctrls">
-  <button id="btn-rot">自动巡游</button>
-  <button id="btn-rst">视角复位</button>
+  <button id="btn-rot" data-i18n="btn.rotate">自动巡游</button>
+  <button id="btn-rst" data-i18n="btn.reset">视角复位</button>
 </div>
 <div id="app"></div>
 
@@ -795,7 +941,7 @@ function endCine(){
   setTimeout(()=>{cine.style.display='none'},1500);
 }
 /* 默认 4.8s 后自动退场;数据加载完也会调用 endCine */
-setTimeout(endCine,4800);
+const CINE_MIN=7200;const cineStart=Date.now();setTimeout(endCine,CINE_MIN);
 document.getElementById('cine-skip').addEventListener('click',endCine);
 document.getElementById('nav-explore').addEventListener('click',()=>{
   document.getElementById('btn-rst').click();
@@ -822,41 +968,41 @@ const TC={
 const TM={"北京市":"mountain","天津市":"farmland","河北省":"farmland","山西省":"mountain","内蒙古自治区":"grassland","辽宁省":"boreal","吉林省":"boreal","黑龙江省":"boreal","上海市":"farmland","江苏省":"farmland","浙江省":"farmland","安徽省":"farmland","福建省":"tropical","江西省":"mountain","山东省":"farmland","河南省":"farmland","湖北省":"mountain","湖南省":"mountain","广东省":"tropical","广西壮族自治区":"tropical","海南省":"ocean","重庆市":"mountain","四川省":"mountain","贵州省":"mountain","云南省":"tropical","西藏自治区":"snow","陕西省":"mountain","甘肃省":"desert","青海省":"snow","宁夏回族自治区":"desert","新疆维吾尔自治区":"desert","台湾省":"tropical","香港特别行政区":"ocean","澳门特别行政区":"ocean"};
 const TE={grassland:1.2,desert:1,snow:3,tropical:.8,farmland:.5,boreal:1,mountain:1.8,ocean:.3};
 
-const IMG={hemaji:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/51ab9ac8dbf14910b6659c0441da3493.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=qZS1uPkfP27jUcX%2FCS6p9kg7PqM%3D",yiou:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/d597ddeff1e042e988a32c6a97775c44.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=00dKkqClg3fp%2FxID%2BAXYDG8rqLk%3D",bao:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/16cccba3c223499d98c8295c3f23229c.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=FiTu%2BiJqFwJO%2BC2aATDge2iY0fY%3D",yema:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/937563c3c0ed437db4cf43fd2e3a14a0.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808712000&x-orig-sign=UfOtZX4IGS9T5PEzcqa%2FNVGru8k%3D",hb:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/88012773e14641bdbc50872f330b1fc1.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=%2BUMVLjzctn5sQUnKrGIpoapwquQ%3D",hu:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/7662e854fedf45d8b42b755421b79349.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=dlEA962RY%2FLA9rFfSZCVb5Sjd4Q%3D",he:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/6315b03b784b4067aed4512d9a8e0e1b.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=7zWLdSFrtwl2Z8A9P0%2BHwhWeoHg%3D",xun:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/9111760df30147969a32f269bbf98e20.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=E905jmVUVFh1khRN0ssMQhxpMhU%3D",ml:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/f74c52dc51f64462a0c1d206a0327ba8.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808712000&x-orig-sign=YD3cC%2BEGLmWrMbuzBhX6gErWv%2F0%3D",zh:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/ae885308cb184526b117afdb4ea7d439.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=SHb5Pl6mzKVToytqRE%2Ffh2uPZF4%3D",yz:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/1c568debca8648a9a3702d5777d04658.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=gf7uAxIC%2FMks954%2FnFo1kY83%2Fhs%3D",ht:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/495bbf56b8ad4cdc9f53096d492c9237.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=aiW7QcXAJs7T54eYzB%2FTMKgXI4Y%3D",bh:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/f0cde3bafd79444397afe27bda9b12ea.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=5jIu24n7X%2F7027qV%2FyGnu287Pr8%3D",bg:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/011371cfb1224861870f5818ad1265c9.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=i7PzHfNpPk2nJfbWj5TfMtTvGhI%3D",db:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/29481e323a894731844a265939e69b01.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=edAHozbBsWMzPEKrbBVeUXzF3%2Fw%3D",jt:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/9314bb028734443993b93eeff8dc4e73.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=s5N5LeHwHWdIKm83QoXe9RAQywk%3D",hf:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/71e0f4ee816a44509e357963ad673b6d.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=4vg1y%2BPHEdr%2BAdOJRTVbxr8MPr4%3D",bt:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/9355e7d992984147a4c14977a0bbb7cf.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=3%2FiLxfHnazEZXLMt3eb3WO9SO8A%3D",cb:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/2c2589b615324055bafcd01ec9ecbdf1.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=TyQWamMCxakB7NlxYRch8k%2BM8P0%3D",cj:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/d599a6acc8f245348274095fa384c4b8.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=R3VMWrhlJpVSrdgHoxEXj4oEP9g%3D",xm:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/c30dc75dae5d4499b2fb9c6dc8f722e4.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=wNLUnJegrkOF7R%2FnG7HB8mFXv2k%3D",qj:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/4cfb13ef30364705b99856a9e68d3b9e.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=%2BVuOC3EHgxxe1Nb90i9YvJ6t0Pw%3D",yx:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/54df729612d448f8a84fcd527105efc9.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=aKSI0uAtCYcZw9OjBvvTx8fhm2g%3D",xb:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/911693ce13bb486aa967e7dd4ac4524d.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=naZsTE4zKrlAiYAYfJpEpqwfLy0%3D",yl:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/69b3731fcecd4642a6c5f1e307bb09a0.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808712000&x-orig-sign=IyQJLWqju%2Fig5ptn0yOSVCg5aXY%3D",zl:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/8cee2b4a491f4b3aa1e0922ef3c83199.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808712000&x-orig-sign=z%2FO9rIy6q3Wko%2BlypmZ%2BkViTcI0%3D",hg:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/ebc760f007e046a3be085aa34dcd7e91.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=BE7STXmhAumH9xzWOMvvlb55OtY%3D",tw:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/ea9798b0f52f423ead1e9e891fe23e3a.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=dWvNG%2FmhgTPcOFzFhCEzaLwTduY%3D"};
+const IMG={hemaji:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/51ab9ac8dbf14910b6659c0441da3493.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=qZS1uPkfP27jUcX%2FCS6p9kg7PqM%3D",yiou:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/d597ddeff1e042e988a32c6a97775c44.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=00dKkqClg3fp%2FxID%2BAXYDG8rqLk%3D",bao:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/16cccba3c223499d98c8295c3f23229c.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=FiTu%2BiJqFwJO%2BC2aATDge2iY0fY%3D",yema:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/937563c3c0ed437db4cf43fd2e3a14a0.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808712000&x-orig-sign=UfOtZX4IGS9T5PEzcqa%2FNVGru8k%3D",hb:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/88012773e14641bdbc50872f330b1fc1.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=%2BUMVLjzctn5sQUnKrGIpoapwquQ%3D",hu:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/7662e854fedf45d8b42b755421b79349.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=dlEA962RY%2FLA9rFfSZCVb5Sjd4Q%3D",he:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/6315b03b784b4067aed4512d9a8e0e1b.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=7zWLdSFrtwl2Z8A9P0%2BHwhWeoHg%3D",xun:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/9111760df30147969a32f269bbf98e20.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=E905jmVUVFh1khRN0ssMQhxpMhU%3D",ml:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/f74c52dc51f64462a0c1d206a0327ba8.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808712000&x-orig-sign=YD3cC%2BEGLmWrMbuzBhX6gErWv%2F0%3D",zh:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/ae885308cb184526b117afdb4ea7d439.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=SHb5Pl6mzKVToytqRE%2Ffh2uPZF4%3D",yz:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/1c568debca8648a9a3702d5777d04658.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=gf7uAxIC%2FMks954%2FnFo1kY83%2Fhs%3D",ht:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/495bbf56b8ad4cdc9f53096d492c9237.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=aiW7QcXAJs7T54eYzB%2FTMKgXI4Y%3D",bh:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/f0cde3bafd79444397afe27bda9b12ea.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=5jIu24n7X%2F7027qV%2FyGnu287Pr8%3D",bg:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/011371cfb1224861870f5818ad1265c9.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=i7PzHfNpPk2nJfbWj5TfMtTvGhI%3D",db:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/29481e323a894731844a265939e69b01.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=edAHozbBsWMzPEKrbBVeUXzF3%2Fw%3D",jt:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/9314bb028734443993b93eeff8dc4e73.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=s5N5LeHwHWdIKm83QoXe9RAQywk%3D",hf:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/71e0f4ee816a44509e357963ad673b6d.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=4vg1y%2BPHEdr%2BAdOJRTVbxr8MPr4%3D",bt:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/9355e7d992984147a4c14977a0bbb7cf.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=3%2FiLxfHnazEZXLMt3eb3WO9SO8A%3D",cb:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/2c2589b615324055bafcd01ec9ecbdf1.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=TyQWamMCxakB7NlxYRch8k%2BM8P0%3D",cj:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/d599a6acc8f245348274095fa384c4b8.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=R3VMWrhlJpVSrdgHoxEXj4oEP9g%3D",xm:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/c30dc75dae5d4499b2fb9c6dc8f722e4.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=wNLUnJegrkOF7R%2FnG7HB8mFXv2k%3D",qj:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/4cfb13ef30364705b99856a9e68d3b9e.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=%2BVuOC3EHgxxe1Nb90i9YvJ6t0Pw%3D",yx:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/54df729612d448f8a84fcd527105efc9.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=aKSI0uAtCYcZw9OjBvvTx8fhm2g%3D",xb:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/911693ce13bb486aa967e7dd4ac4524d.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=naZsTE4zKrlAiYAYfJpEpqwfLy0%3D",yl:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/69b3731fcecd4642a6c5f1e307bb09a0.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808712000&x-orig-sign=IyQJLWqju%2Fig5ptn0yOSVCg5aXY%3D",zl:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/8cee2b4a491f4b3aa1e0922ef3c83199.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808712000&x-orig-sign=z%2FO9rIy6q3Wko%2BlypmZ%2BkViTcI0%3D",hg:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/ebc760f007e046a3be085aa34dcd7e91.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=BE7STXmhAumH9xzWOMvvlb55OtY%3D",tw:"https://p-mira-img-sign-sgnontt.byteintl.net/tos-mya-i-xobrcjvdq7/ea9798b0f52f423ead1e9e891fe23e3a.jpeg~tplv-xobrcjvdq7-image-jpeg.jpeg?lk3s=3523e930&x-orig-authkey=miraorigin&x-orig-expires=1808715600&x-orig-sign=dWvNG%2FmhgTPcOFzFhCEzaLwTduY%3D",dni:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Andrias_japonicus01.jpg/800px-Andrias_japonicus01.jpg",dbb:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Amur_leopard_%28P.p.orientalis%29.jpg/800px-Amur_leopard_%28P.p.orientalis%29.jpg",zhqsy:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Scaly-sided_Merganser%2C_Mergus_squamatus.jpg/800px-Scaly-sided_Merganser%2C_Mergus_squamatus.jpg",bth:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Grus_monacha_-_Izumi%2C_Kagoshima_-_2013-02-09.jpg/800px-Grus_monacha_-_Izumi%2C_Kagoshima_-_2013-02-09.jpg",sjy:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Calidris_pygmaea_-_Pak_Thale.jpg/800px-Calidris_pygmaea_-_Pak_Thale.jpg",zhfty:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Chinese_Crested_Tern.jpg/800px-Chinese_Crested_Tern.jpg",bqt:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Baiji.jpg/800px-Baiji.jpg",lgzm:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Courtois%27s_Laughingthrush.jpg/800px-Courtois%27s_Laughingthrush.jpg",dte:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Cygnus_cygnus_2_%28Piotr_Kuczynski%29.jpg/800px-Cygnus_cygnus_2_%28Piotr_Kuczynski%29.jpg",csj:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Manis_pentadactyla_%2830130296826%29.jpg/800px-Manis_pentadactyla_%2830130296826%29.jpg",ex:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Shinisaurus_crocodilurus.jpg/800px-Shinisaurus_crocodilurus.jpg",hnpl:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Eld%27s_deer.jpg/800px-Eld%27s_deer.jpg",hyh:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Fran%C3%A7ois_Langur.jpg/800px-Fran%C3%A7ois_Langur.jpg",djsh:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Yunnan_snub-nosed_monkey.jpg/800px-Yunnan_snub-nosed_monkey.jpg",lkq:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Pavo_muticus_imperator_by_George_Edward_Lodge.jpg/800px-Pavo_muticus_imperator_by_George_Edward_Lodge.jpg",ymny:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Wild_yak.jpg/800px-Wild_yak.jpg",psyl:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Przewalski%27s_gazelle.jpg/800px-Przewalski%27s_gazelle.jpg",hmm:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Chinese_mountain_cat.jpg/800px-Chinese_mountain_cat.jpg",hl:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Castor_fiber_vistulanus.jpg/800px-Castor_fiber_vistulanus.jpg"};
 
 /* 物种数据 - 每省多种, c=类别用于选glTF模型 */
 const P={
-"北京市":{animals:[{n:"褐马鸡",la:"Crossoptilon mantchuricum",lv:"VU",c:"bird",img:IMG.hemaji,d:"中国特有鸟类，分布于华北山地森林，国家一级保护动物。"},{n:"黑鹳",la:"Ciconia nigra",lv:"VU",c:"bird",img:IMG.hg,d:"大型涉禽，十渡和百花山地区为北京重要栖息地。"},{n:"大鲵",la:"Andrias davidianus",lv:"CR",c:"fish",img:null,d:"世界最大两栖动物，北京西部山区有零星记录。"}]},
+"北京市":{animals:[{n:"褐马鸡",la:"Crossoptilon mantchuricum",lv:"VU",c:"bird",img:IMG.hemaji,d:"中国特有鸟类，分布于华北山地森林，国家一级保护动物。"},{n:"黑鹳",la:"Ciconia nigra",lv:"VU",c:"bird",img:IMG.hg,d:"大型涉禽，十渡和百花山地区为北京重要栖息地。"},{n:"大鲵",la:"Andrias davidianus",lv:"CR",c:"fish",img:IMG.dni,d:"世界最大两栖动物，北京西部山区有零星记录。"}]},
 "天津市":{animals:[{n:"遗鸥",la:"Ichthyaetus relictus",lv:"VU",c:"bird",img:IMG.yiou,d:"全球数量稀少的海鸥，冬季在渤海湾沿岸越冬。"},{n:"东方白鹳",la:"Ciconia boyciana",lv:"EN",c:"bird",img:IMG.bg,d:"天津北大港湿地是重要迁徙中转站。"},{n:"斑海豹",la:"Phoca largha",lv:"NT",c:"mammal",img:IMG.hb,d:"渤海湾沿岸偶有出没。"}]},
 "河北省":{animals:[{n:"华北豹",la:"Panthera pardus japonensis",lv:"EN",c:"mammal",img:IMG.bao,d:"金钱豹的中国亚种，分布于华北山地。"},{n:"褐马鸡",la:"Crossoptilon mantchuricum",lv:"VU",c:"bird",img:IMG.hemaji,d:"小五台山有稳定种群。"}]},
 "山西省":{animals:[{n:"褐马鸡",la:"Crossoptilon mantchuricum",lv:"VU",c:"bird",img:IMG.hemaji,d:"庞泉沟是褐马鸡最重要栖息地。"},{n:"华北豹",la:"Panthera pardus japonensis",lv:"EN",c:"mammal",img:IMG.bao,d:"太行山、吕梁山有稳定种群。"}]},
 "内蒙古自治区":{animals:[{n:"普氏野马",la:"Equus ferus przewalskii",lv:"EN",c:"ungulate",img:IMG.yema,d:"世界唯一存活的野生马种。"},{n:"大鸨",la:"Otis tarda",lv:"EN",c:"bird",img:IMG.db,d:"繁殖于内蒙古草原，世界最重飞行鸟类。"},{n:"遗鸥",la:"Ichthyaetus relictus",lv:"VU",c:"bird",img:IMG.yiou,d:"鄂尔多斯是全球最大繁殖地。"}]},
 "辽宁省":{animals:[{n:"斑海豹",la:"Phoca largha",lv:"NT",c:"mammal",img:IMG.hb,d:"辽东湾是全球最南端繁殖区。"},{n:"东北虎",la:"Panthera tigris altaica",lv:"EN",c:"mammal",img:IMG.hu,d:"辽东山区偶有痕迹。"}]},
-"吉林省":{animals:[{n:"东北虎",la:"Panthera tigris altaica",lv:"EN",c:"mammal",img:IMG.hu,d:"珲春-汪清是核心栖息地。"},{n:"东北豹",la:"Panthera pardus orientalis",lv:"CR",c:"mammal",img:null,d:"全球最稀有大型猫科，珲春约40只。"},{n:"中华秋沙鸭",la:"Mergus squamatus",lv:"EN",c:"bird",img:null,d:"长白山区是重要繁殖地。"}]},
-"黑龙江省":{animals:[{n:"丹顶鹤",la:"Grus japonensis",lv:"EN",c:"bird",img:IMG.he,d:"扎龙自然保护区是全球最大繁殖地。"},{n:"东北虎",la:"Panthera tigris altaica",lv:"EN",c:"mammal",img:IMG.hu,d:"完达山和小兴安岭有分布。"},{n:"白头鹤",la:"Grus monacha",lv:"VU",c:"bird",img:null,d:"三江平原是重要繁殖地。"}]},
-"上海市":{animals:[{n:"中华鲟",la:"Acipenser sinensis",lv:"CR",c:"fish",img:IMG.xun,d:"活化石鱼类，长江口为入海通道。"},{n:"勺嘴鹬",la:"Calidris pygmaea",lv:"CR",c:"bird",img:null,d:"全球不足600只，崇明东滩为停歇地。"}]},
+"吉林省":{animals:[{n:"东北虎",la:"Panthera tigris altaica",lv:"EN",c:"mammal",img:IMG.hu,d:"珲春-汪清是核心栖息地。"},{n:"东北豹",la:"Panthera pardus orientalis",lv:"CR",c:"mammal",img:IMG.dbb,d:"全球最稀有大型猫科，珲春约40只。"},{n:"中华秋沙鸭",la:"Mergus squamatus",lv:"EN",c:"bird",img:IMG.zhqsy,d:"长白山区是重要繁殖地。"}]},
+"黑龙江省":{animals:[{n:"丹顶鹤",la:"Grus japonensis",lv:"EN",c:"bird",img:IMG.he,d:"扎龙自然保护区是全球最大繁殖地。"},{n:"东北虎",la:"Panthera tigris altaica",lv:"EN",c:"mammal",img:IMG.hu,d:"完达山和小兴安岭有分布。"},{n:"白头鹤",la:"Grus monacha",lv:"VU",c:"bird",img:IMG.bth,d:"三江平原是重要繁殖地。"}]},
+"上海市":{animals:[{n:"中华鲟",la:"Acipenser sinensis",lv:"CR",c:"fish",img:IMG.xun,d:"活化石鱼类，长江口为入海通道。"},{n:"勺嘴鹬",la:"Calidris pygmaea",lv:"CR",c:"bird",img:IMG.sjy,d:"全球不足600只，崇明东滩为停歇地。"}]},
 "江苏省":{animals:[{n:"麋鹿",la:"Elaphurus davidianus",lv:"EN",c:"ungulate",img:IMG.ml,d:"大丰保护区已恢复至7000余头。"},{n:"丹顶鹤",la:"Grus japonensis",lv:"EN",c:"bird",img:IMG.he,d:"盐城湿地是全球最大越冬地。"}]},
-"浙江省":{animals:[{n:"朱鹮",la:"Nipponia nippon",lv:"EN",c:"bird",img:IMG.zh,d:"德清下渚湖建立人工繁育种群。"},{n:"中华凤头燕鸥",la:"Thalasseus bernsteini",lv:"CR",c:"bird",img:null,d:"全球不足100只，舟山为繁殖地。"}]},
-"安徽省":{animals:[{n:"扬子鳄",la:"Alligator sinensis",lv:"CR",c:"reptile",img:IMG.yz,d:"中国特有鳄类，野外约150条。"},{n:"白鳍豚",la:"Lipotes vexillifer",lv:"CR",c:"fish",img:null,d:"长江女神，2007年功能性灭绝。"}]},
+"浙江省":{animals:[{n:"朱鹮",la:"Nipponia nippon",lv:"EN",c:"bird",img:IMG.zh,d:"德清下渚湖建立人工繁育种群。"},{n:"中华凤头燕鸥",la:"Thalasseus bernsteini",lv:"CR",c:"bird",img:IMG.zhfty,d:"全球不足100只，舟山为繁殖地。"}]},
+"安徽省":{animals:[{n:"扬子鳄",la:"Alligator sinensis",lv:"CR",c:"reptile",img:IMG.yz,d:"中国特有鳄类，野外约150条。"},{n:"白鳍豚",la:"Lipotes vexillifer",lv:"CR",c:"fish",img:IMG.bqt,d:"长江女神，2007年功能性灭绝。"}]},
 "福建省":{animals:[{n:"中华白海豚",la:"Sousa chinensis",lv:"VU",c:"fish",img:IMG.ht,d:"厦门湾和东山海域为重要栖息地。"},{n:"黄腹角雉",la:"Tragopan caboti",lv:"VU",c:"bird",img:IMG.hf,d:"武夷山为核心分布区。"}]},
-"江西省":{animals:[{n:"白鹤",la:"Leucogeranus leucogeranus",lv:"CR",c:"bird",img:IMG.bh,d:"鄱阳湖是全球98%白鹤越冬地。"},{n:"长江江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:IMG.jt,d:"鄱阳湖约450头。"},{n:"蓝冠噪鹛",la:"Pterorhinus courtoisi",lv:"CR",c:"bird",img:null,d:"全球约200只，婺源唯一繁殖地。"}]},
-"山东省":{animals:[{n:"东方白鹳",la:"Ciconia boyciana",lv:"EN",c:"bird",img:IMG.bg,d:"黄河三角洲是重要繁殖与越冬地。"},{n:"大天鹅",la:"Cygnus cygnus",lv:"NT",c:"bird",img:null,d:"荣成天鹅湖每年越冬上万只。"}]},
-"河南省":{animals:[{n:"大鸨",la:"Otis tarda",lv:"EN",c:"bird",img:IMG.db,d:"黄河滩涂是越冬地。"},{n:"大鲵",la:"Andrias davidianus",lv:"CR",c:"fish",img:null,d:"伏牛山和桐柏山区有野生种群。"}]},
+"江西省":{animals:[{n:"白鹤",la:"Leucogeranus leucogeranus",lv:"CR",c:"bird",img:IMG.bh,d:"鄱阳湖是全球98%白鹤越冬地。"},{n:"长江江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:IMG.jt,d:"鄱阳湖约450头。"},{n:"蓝冠噪鹛",la:"Pterorhinus courtoisi",lv:"CR",c:"bird",img:IMG.lgzm,d:"全球约200只，婺源唯一繁殖地。"}]},
+"山东省":{animals:[{n:"东方白鹳",la:"Ciconia boyciana",lv:"EN",c:"bird",img:IMG.bg,d:"黄河三角洲是重要繁殖与越冬地。"},{n:"大天鹅",la:"Cygnus cygnus",lv:"NT",c:"bird",img:IMG.dte,d:"荣成天鹅湖每年越冬上万只。"}]},
+"河南省":{animals:[{n:"大鸨",la:"Otis tarda",lv:"EN",c:"bird",img:IMG.db,d:"黄河滩涂是越冬地。"},{n:"大鲵",la:"Andrias davidianus",lv:"CR",c:"fish",img:IMG.dni,d:"伏牛山和桐柏山区有野生种群。"}]},
 "湖北省":{animals:[{n:"长江江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:IMG.jt,d:"石首天鹅洲为迁地保护基地。"},{n:"金丝猴",la:"Rhinopithecus roxellana",lv:"EN",c:"primate",img:IMG.cj,d:"神农架是重要分布地。"},{n:"中华鲟",la:"Acipenser sinensis",lv:"CR",c:"fish",img:IMG.xun,d:"葛洲坝下游是仅存产卵场。"}]},
-"湖南省":{animals:[{n:"黄腹角雉",la:"Tragopan caboti",lv:"VU",c:"bird",img:IMG.hf,d:"桃源洞和壶瓶山为重要栖息地。"},{n:"大鲵",la:"Andrias davidianus",lv:"CR",c:"fish",img:null,d:"张家界是核心保护地。"}]},
-"广东省":{animals:[{n:"中华白海豚",la:"Sousa chinensis",lv:"VU",c:"fish",img:IMG.ht,d:"珠江口是全球最大栖息地。"},{n:"穿山甲",la:"Manis pentadactyla",lv:"CR",c:"mammal",img:null,d:"粤北有少量分布。"}]},
-"广西壮族自治区":{animals:[{n:"白头叶猴",la:"Trachypithecus leucocephalus",lv:"CR",c:"primate",img:IMG.bt,d:"仅分布于崇左，野外约1200只。"},{n:"鳄蜥",la:"Shinisaurus crocodilurus",lv:"EN",c:"reptile",img:null,d:"大瑶山是全球核心分布区。"}]},
-"海南省":{animals:[{n:"海南长臂猿",la:"Nomascus hainanus",lv:"CR",c:"primate",img:IMG.cb,d:"世界最濒危灵长类，约36只。"},{n:"海南坡鹿",la:"Rucervus eldii hainanus",lv:"EN",c:"ungulate",img:null,d:"海南特有亚种，约400只。"}]},
-"重庆市":{animals:[{n:"川金丝猴",la:"Rhinopithecus roxellana",lv:"EN",c:"primate",img:IMG.cj,d:"金佛山是重庆主要栖息地。"},{n:"大鲵",la:"Andrias davidianus",lv:"CR",c:"fish",img:null,d:"三峡支流有野生种群。"}]},
+"湖南省":{animals:[{n:"黄腹角雉",la:"Tragopan caboti",lv:"VU",c:"bird",img:IMG.hf,d:"桃源洞和壶瓶山为重要栖息地。"},{n:"大鲵",la:"Andrias davidianus",lv:"CR",c:"fish",img:IMG.dni,d:"张家界是核心保护地。"}]},
+"广东省":{animals:[{n:"中华白海豚",la:"Sousa chinensis",lv:"VU",c:"fish",img:IMG.ht,d:"珠江口是全球最大栖息地。"},{n:"穿山甲",la:"Manis pentadactyla",lv:"CR",c:"mammal",img:IMG.csj,d:"粤北有少量分布。"}]},
+"广西壮族自治区":{animals:[{n:"白头叶猴",la:"Trachypithecus leucocephalus",lv:"CR",c:"primate",img:IMG.bt,d:"仅分布于崇左，野外约1200只。"},{n:"鳄蜥",la:"Shinisaurus crocodilurus",lv:"EN",c:"reptile",img:IMG.ex,d:"大瑶山是全球核心分布区。"}]},
+"海南省":{animals:[{n:"海南长臂猿",la:"Nomascus hainanus",lv:"CR",c:"primate",img:IMG.cb,d:"世界最濒危灵长类，约36只。"},{n:"海南坡鹿",la:"Rucervus eldii hainanus",lv:"EN",c:"ungulate",img:IMG.hnpl,d:"海南特有亚种，约400只。"}]},
+"重庆市":{animals:[{n:"川金丝猴",la:"Rhinopithecus roxellana",lv:"EN",c:"primate",img:IMG.cj,d:"金佛山是重庆主要栖息地。"},{n:"大鲵",la:"Andrias davidianus",lv:"CR",c:"fish",img:IMG.dni,d:"三峡支流有野生种群。"}]},
 "四川省":{animals:[{n:"大熊猫",la:"Ailuropoda melanoleuca",lv:"VU",c:"mammal",img:IMG.xm,d:"中国国宝，四川约1200只野生个体。"},{n:"川金丝猴",la:"Rhinopithecus roxellana",lv:"EN",c:"primate",img:IMG.cj,d:"四川是最大分布区。"},{n:"雪豹",la:"Panthera uncia",lv:"VU",c:"mammal",img:IMG.xb,d:"甘孜阿坝高山有分布。"}]},
-"贵州省":{animals:[{n:"黔金丝猴",la:"Rhinopithecus brelichi",lv:"CR",c:"primate",img:IMG.qj,d:"仅分布于梵净山，约750只。"},{n:"黑叶猴",la:"Trachypithecus francoisi",lv:"EN",c:"primate",img:null,d:"荔波茂兰是重要栖息地。"}]},
-"云南省":{animals:[{n:"亚洲象",la:"Elephas maximus",lv:"EN",c:"mammal",img:IMG.yx,d:"中国仅分布于云南，约300头。"},{n:"滇金丝猴",la:"Rhinopithecus bieti",lv:"EN",c:"primate",img:null,d:"白马雪山核心栖息地，约3000只。"},{n:"绿孔雀",la:"Pavo muticus",lv:"EN",c:"bird",img:null,d:"全球濒危，云南是仅存栖息地。"}]},
-"西藏自治区":{animals:[{n:"雪豹",la:"Panthera uncia",lv:"VU",c:"mammal",img:IMG.xb,d:"青藏高原是全球核心栖息地。"},{n:"藏羚羊",la:"Pantholops hodgsonii",lv:"NT",c:"ungulate",img:IMG.zl,d:"羌塘高原最大栖息地。"},{n:"野牦牛",la:"Bos mutus",lv:"VU",c:"ungulate",img:null,d:"野外约15000头。"}]},
+"贵州省":{animals:[{n:"黔金丝猴",la:"Rhinopithecus brelichi",lv:"CR",c:"primate",img:IMG.qj,d:"仅分布于梵净山，约750只。"},{n:"黑叶猴",la:"Trachypithecus francoisi",lv:"EN",c:"primate",img:IMG.hyh,d:"荔波茂兰是重要栖息地。"}]},
+"云南省":{animals:[{n:"亚洲象",la:"Elephas maximus",lv:"EN",c:"mammal",img:IMG.yx,d:"中国仅分布于云南，约300头。"},{n:"滇金丝猴",la:"Rhinopithecus bieti",lv:"EN",c:"primate",img:IMG.djsh,d:"白马雪山核心栖息地，约3000只。"},{n:"绿孔雀",la:"Pavo muticus",lv:"EN",c:"bird",img:IMG.lkq,d:"全球濒危，云南是仅存栖息地。"}]},
+"西藏自治区":{animals:[{n:"雪豹",la:"Panthera uncia",lv:"VU",c:"mammal",img:IMG.xb,d:"青藏高原是全球核心栖息地。"},{n:"藏羚羊",la:"Pantholops hodgsonii",lv:"NT",c:"ungulate",img:IMG.zl,d:"羌塘高原最大栖息地。"},{n:"野牦牛",la:"Bos mutus",lv:"VU",c:"ungulate",img:IMG.ymny,d:"野外约15000头。"}]},
 "陕西省":{animals:[{n:"朱鹮",la:"Nipponia nippon",lv:"EN",c:"bird",img:IMG.zh,d:"从7只恢复至7000余只。"},{n:"大熊猫",la:"Ailuropoda melanoleuca",lv:"VU",c:"mammal",img:IMG.xm,d:"秦岭种群约350只。"},{n:"金丝猴",la:"Rhinopithecus roxellana",lv:"EN",c:"primate",img:IMG.cj,d:"秦岭是最东分布地。"}]},
 "甘肃省":{animals:[{n:"野骆驼",la:"Camelus ferus",lv:"CR",c:"ungulate",img:IMG.yl,d:"全球不足千头，安西为核心区。"},{n:"雪豹",la:"Panthera uncia",lv:"VU",c:"mammal",img:IMG.xb,d:"祁连山有稳定种群。"}]},
-"青海省":{animals:[{n:"藏羚羊",la:"Pantholops hodgsonii",lv:"NT",c:"ungulate",img:IMG.zl,d:"可可西里是核心产羔地。"},{n:"雪豹",la:"Panthera uncia",lv:"VU",c:"mammal",img:IMG.xb,d:"三江源高密度分布。"},{n:"普氏原羚",la:"Procapra przewalskii",lv:"EN",c:"ungulate",img:null,d:"中国特有，约2700只。"}]},
-"宁夏回族自治区":{animals:[{n:"黑鹳",la:"Ciconia nigra",lv:"VU",c:"bird",img:IMG.hg,d:"贺兰山为重要栖息地。"},{n:"荒漠猫",la:"Felis bieti",lv:"VU",c:"mammal",img:null,d:"中国特有猫科动物。"}]},
-"新疆维吾尔自治区":{animals:[{n:"普氏野马",la:"Equus ferus przewalskii",lv:"EN",c:"ungulate",img:IMG.yema,d:"卡拉麦里最大放归基地。"},{n:"野骆驼",la:"Camelus ferus",lv:"CR",c:"ungulate",img:IMG.yl,d:"罗布泊周边栖息。"},{n:"雪豹",la:"Panthera uncia",lv:"VU",c:"mammal",img:IMG.xb,d:"天山和昆仑山有分布。"},{n:"河狸",la:"Castor fiber",lv:"EN",c:"mammal",img:null,d:"布尔根是中国唯一种群。"}]},
+"青海省":{animals:[{n:"藏羚羊",la:"Pantholops hodgsonii",lv:"NT",c:"ungulate",img:IMG.zl,d:"可可西里是核心产羔地。"},{n:"雪豹",la:"Panthera uncia",lv:"VU",c:"mammal",img:IMG.xb,d:"三江源高密度分布。"},{n:"普氏原羚",la:"Procapra przewalskii",lv:"EN",c:"ungulate",img:IMG.psyl,d:"中国特有，约2700只。"}]},
+"宁夏回族自治区":{animals:[{n:"黑鹳",la:"Ciconia nigra",lv:"VU",c:"bird",img:IMG.hg,d:"贺兰山为重要栖息地。"},{n:"荒漠猫",la:"Felis bieti",lv:"VU",c:"mammal",img:IMG.hmm,d:"中国特有猫科动物。"}]},
+"新疆维吾尔自治区":{animals:[{n:"普氏野马",la:"Equus ferus przewalskii",lv:"EN",c:"ungulate",img:IMG.yema,d:"卡拉麦里最大放归基地。"},{n:"野骆驼",la:"Camelus ferus",lv:"CR",c:"ungulate",img:IMG.yl,d:"罗布泊周边栖息。"},{n:"雪豹",la:"Panthera uncia",lv:"VU",c:"mammal",img:IMG.xb,d:"天山和昆仑山有分布。"},{n:"河狸",la:"Castor fiber",lv:"EN",c:"mammal",img:IMG.hl,d:"布尔根是中国唯一种群。"}]},
 "台湾省":{animals:[{n:"台湾云豹",la:"Neofelis nebulosa brachyura",lv:"CR",c:"mammal",img:IMG.tw,d:"可能已功能性灭绝。"},{n:"台湾黑熊",la:"Ursus thibetanus formosanus",lv:"VU",c:"mammal",img:null,d:"特有亚种，约200-600只。"}]},
 "香港特别行政区":{animals:[{n:"中华白海豚",la:"Sousa chinensis",lv:"VU",c:"fish",img:IMG.ht,d:"大屿山以北为栖息地。"},{n:"黑脸琵鹭",la:"Platalea minor",lv:"EN",c:"bird",img:null,d:"后海湾全球第三大越冬地。"}]},
 "澳门特别行政区":{animals:[{n:"中华白海豚",la:"Sousa chinensis",lv:"VU",c:"fish",img:IMG.ht,d:"珠江口偶有记录。"},{n:"黑脸琵鹭",la:"Platalea minor",lv:"EN",c:"bird",img:null,d:"路氹湿地有越冬记录。"}]}
@@ -878,13 +1024,13 @@ const EXTRA={
   "浙江省":[{n:"黄腹角雉",la:"Tragopan caboti",lv:"VU",c:"bird",img:IMG.hf,d:"乌岩岭是其核心保护区,中国特有美丽雉类。"},
            {n:"江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:null,d:"舟山海域仍有少量海洋亚种出没。"}],
   "安徽省":[{n:"长江江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:IMG.jt,d:"安庆至铜陵江段是稳定栖息区。"}],
-  "福建省":[{n:"勺嘴鹬",la:"Calidris pygmaea",lv:"CR",c:"bird",img:null,d:"福建闽江口湿地是重要迁徙停歇地。"}],
-  "江西省":[{n:"中华秋沙鸭",la:"Mergus squamatus",lv:"EN",c:"bird",img:null,d:"婺源冬季可观察到野生种群越冬。"}],
+  "福建省":[{n:"勺嘴鹬",la:"Calidris pygmaea",lv:"CR",c:"bird",img:IMG.sjy,d:"福建闽江口湿地是重要迁徙停歇地。"}],
+  "江西省":[{n:"中华秋沙鸭",la:"Mergus squamatus",lv:"EN",c:"bird",img:IMG.zhqsy,d:"婺源冬季可观察到野生种群越冬。"}],
   "山东省":[{n:"斑海豹",la:"Phoca largha",lv:"NT",c:"mammal",img:IMG.hb,d:"庙岛群岛是黄渤海种群的核心繁殖区。"}],
-  "河南省":[{n:"中华秋沙鸭",la:"Mergus squamatus",lv:"EN",c:"bird",img:null,d:"河南黄河湿地有越冬记录,国家一级保护动物。"}],
+  "河南省":[{n:"中华秋沙鸭",la:"Mergus squamatus",lv:"EN",c:"bird",img:IMG.zhqsy,d:"河南黄河湿地有越冬记录,国家一级保护动物。"}],
   "湖北省":[{n:"神农架金丝猴",la:"Rhinopithecus roxellana hubeiensis",lv:"EN",c:"primate",img:null,d:"神农架特有亚种,种群约1400只。"}],
   "湖南省":[{n:"白颈长尾雉",la:"Syrmaticus ellioti",lv:"VU",c:"bird",img:null,d:"华南山林稀有雉类,中国特有。"}],
-  "广东省":[{n:"鳄蜥",la:"Shinisaurus crocodilurus",lv:"EN",c:"reptile",img:null,d:"罗坑保护区是其重要栖息地。"}],
+  "广东省":[{n:"鳄蜥",la:"Shinisaurus crocodilurus",lv:"EN",c:"reptile",img:IMG.ex,d:"罗坑保护区是其重要栖息地。"}],
   "广西壮族自治区":[{n:"东黑冠长臂猿",la:"Nomascus nasutus",lv:"CR",c:"primate",img:null,d:"中越边境靖西邦亮,全球不足150只。"},
                    {n:"白眉长臂猿",la:"Hoolock leuconedys",lv:"VU",c:"primate",img:null,d:"桂西南喀斯特地貌中的边缘分布点。"}],
   "海南省":[{n:"海南巨松鼠",la:"Ratufa bicolor hainana",lv:"VU",c:"mammal",img:null,d:"海南特有亚种,热带雨林树冠活动。"},
@@ -900,7 +1046,7 @@ const EXTRA={
   "西藏自治区":[{n:"马来熊",la:"Helarctos malayanus",lv:"VU",c:"mammal",img:null,d:"西藏墨脱为其在中国的边缘分布地。"},
                {n:"黑颈鹤",la:"Grus nigricollis",lv:"NT",c:"bird",img:null,d:"世界唯一高原繁殖鹤类,雅江河谷越冬。"}],
   "陕西省":[{n:"林麝",la:"Moschus berezovskii",lv:"EN",c:"ungulate",img:null,d:"秦岭是重要分布区,人工养殖基地较多。"}],
-  "甘肃省":[{n:"普氏原羚",la:"Procapra przewalskii",lv:"EN",c:"ungulate",img:null,d:"甘肃北部与青海交界的零星分布点。"}],
+  "甘肃省":[{n:"普氏原羚",la:"Procapra przewalskii",lv:"EN",c:"ungulate",img:IMG.psyl,d:"甘肃北部与青海交界的零星分布点。"}],
   "青海省":[{n:"黑颈鹤",la:"Grus nigricollis",lv:"NT",c:"bird",img:null,d:"隆宝滩是主要繁殖地,种群约7000只。"}],
   "新疆维吾尔自治区":[{n:"塔里木兔",la:"Lepus yarkandensis",lv:"EN",c:"mammal",img:null,d:"塔克拉玛干沙漠北缘特有兔类。"},
                      {n:"北山羊",la:"Capra sibirica",lv:"NT",c:"ungulate",img:null,d:"天山和昆仑山高海拔岩壁攀爬者。"}],
@@ -1072,11 +1218,11 @@ function renderAnimal(idx){
   document.getElementById('p-count').innerText='该地区共录入 '+curAnimals.length+' 种濒危物种';
   const img=document.getElementById('p-img'),ph=document.getElementById('p-ph');
   if(a.img){
-    img.style.display='none';ph.style.display='flex';ph.innerText='图片加载中...';
+    img.style.display='none';ph.style.display='flex';ph.innerHTML='<span>图片加载中…</span>';
     img.onload=()=>{img.style.display='block';ph.style.display='none'};
-    img.onerror=()=>{ph.innerText='暂无图片';ph.style.display='flex';img.style.display='none'};
+    img.onerror=()=>{ph.innerHTML='<span>暂无图片</span>';ph.style.display='flex';img.style.display='none'};
     img.src=a.img;
-  }else{img.style.display='none';ph.style.display='flex';ph.innerText='暂无图片'}
+  }else{img.style.display='none';ph.style.display='flex';ph.innerHTML='<span>暂无图片</span>'}
 }
 
 
@@ -1114,7 +1260,8 @@ document.getElementById('btn-rst').onclick=()=>{const sC=cam.position.clone(),sT
 fetch("./china_geo.json")
 .then(r=>r.json()).then(async geo=>{
   await buildMap(geo);
-  endCine();
+  const elapsed=Date.now()-cineStart;const wait=Math.max(0,CINE_MIN-elapsed);
+  setTimeout(endCine,wait);
   // legend reveal 由 endCine 控制
   // ctrls reveal 由 endCine 控制
 }).catch(e=>{document.getElementById('cine').innerHTML='<div style="color:#D47A3A;font-size:13px;letter-spacing:.2em">数据加载失败 · '+e.message+'</div>'});
@@ -1642,10 +1789,13 @@ endCine=function(){_origEnd();setTimeout(updateFab,400)};
     if(data.img){
       hero.style.backgroundImage=`url('${data.img}')`;
       hero.style.backgroundColor='#1a2028';
+      hero.innerHTML='';
       /* 图片加载失败时的兜底 */
       const _im=new Image();_im.onerror=()=>{hero.style.backgroundImage=`linear-gradient(135deg,${LVC[data.lv]||'#3E7C5C'}33,#0d1318)`};_im.src=data.img;
     }else{
-      hero.style.backgroundImage=`linear-gradient(135deg,${LVC[data.lv]||'#3E7C5C'}33,#0d1318)`;
+      hero.style.backgroundImage=`linear-gradient(135deg,${LVC[data.lv]||'#3E7C5C'}44 0%,#1a2028 50%,#0d1318 100%)`;
+      hero.style.backgroundPosition='center';
+      hero.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:72px;opacity:.18;color:#fff">🐾</div>';
     }
     document.getElementById('rev-u').innerText=u;
     document.getElementById('rev-t').innerText=t;
@@ -1685,6 +1835,209 @@ endCine=function(){_origEnd();setTimeout(updateFab,400)};
   });
 })();
 
+
+/* ================== v15.1 i18n ================== */
+const I18N={
+  zh:{
+    "brand.h1":"万物共生","brand.sub":"THE · LIVING · ATLAS",
+    "brand.tag":"中 国 濒 危 动 物 数 字 生 态 志",
+    "hdr.title":"万物共生","hdr.sub":"34 省 · 100+ 物种 · 数字生态志",
+    "nav.explore":"探索地图","nav.about":"关于项目",
+    "btn.rotate":"自动巡游","btn.reset":"视角复位",
+    "legend.title":"濒危等级","legend.cr":"CR 极危","legend.en":"EN 濒危","legend.vu":"VU 易危","legend.nt":"NT 近危",
+    "tool.timeline":"50 年物种变化",
+    "tl.tag":"HALF-CENTURY · 1975 — 2025","tl.title":"五十年之殇","tl.sub":"Fifty Years of Endangered Species Decline in China",
+    "tl.val":"濒危物种数(种)",
+    "cine.poem":"以万物之名 · 立时代之志","cine.skip":"跳过序幕 · SKIP",
+  },
+  en:{
+    "brand.h1":"THE LIVING ATLAS","brand.sub":"WAN · WU · GONG · SHENG",
+    "brand.tag":"C H I N A · E N D A N G E R E D · W I L D L I F E",
+    "hdr.title":"Living Atlas","hdr.sub":"34 Provinces · 100+ Species · Digital Ecology",
+    "nav.explore":"EXPLORE","nav.about":"ABOUT",
+    "btn.rotate":"Auto Orbit","btn.reset":"Reset View",
+    "legend.title":"IUCN STATUS","legend.cr":"CR Critically Endangered","legend.en":"EN Endangered","legend.vu":"VU Vulnerable","legend.nt":"NT Near Threatened",
+    "tool.timeline":"50-Year Timeline",
+    "tl.tag":"HALF-CENTURY · 1975 — 2025","tl.title":"Half a Century of Loss","tl.sub":"Endangered Species in China · 1975 — 2025",
+    "tl.val":"species at risk",
+    "cine.poem":"In the name of all beings · A legacy for our age","cine.skip":"SKIP INTRO",
+  }
+};
+let curLang=localStorage.getItem('wwgs_lang')||(navigator.language||'zh').toLowerCase().startsWith('en')?'en':'zh';
+function t(k){return (I18N[curLang]&&I18N[curLang][k])||I18N.zh[k]||k}
+function applyI18n(){
+  /* 1. 所有 [data-i18n] */
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.dataset.i18n;const v=t(k);if(v)el.innerHTML=v;
+  });
+  /* 2. 头部 */
+  const h1=document.querySelector('#hdr h1');if(h1)h1.innerText=t('hdr.title');
+  const sub=document.querySelector('#hdr .sub');if(sub)sub.innerText=t('hdr.sub');
+  /* 3. legend */
+  const lg=document.getElementById('legend');
+  if(lg){
+    const h4=lg.querySelector('h4');if(h4)h4.innerText=t('legend.title');
+    const rows=lg.querySelectorAll('div.row,div');
+    /* 简单处理:按数据替换 */
+    lg.innerHTML='<h4>'+t('legend.title')+'</h4>'+
+      '<div><span class="sw" style="background:#C0392B"></span>'+t('legend.cr')+'</div>'+
+      '<div><span class="sw" style="background:#D47A3A"></span>'+t('legend.en')+'</div>'+
+      '<div><span class="sw" style="background:#B9923B"></span>'+t('legend.vu')+'</div>'+
+      '<div><span class="sw" style="background:#3F7A89"></span>'+t('legend.nt')+'</div>';
+  }
+  /* 4. 开场诗句/skip */
+  const poem=document.querySelector('.cine-poem');if(poem)poem.innerText=t('cine.poem');
+  const skipBtn=document.getElementById('cine-skip');if(skipBtn)skipBtn.innerText=t('cine.skip');
+  /* 5. 开场品牌(英文时切换主标题) */
+  const brand=document.querySelector('.brand h1');
+  if(brand&&curLang==='en'){
+    brand.innerHTML='<span class="glow">L</span>IVING <span class="glow">A</span>TLAS';
+    brand.style.fontSize='clamp(38px,6.5vw,78px)';
+    brand.style.letterSpacing='.22em';
+  }
+  const brandTag=document.querySelector('.brand .tag');
+  if(brandTag)brandTag.innerText=t('brand.tag');
+  const brandSub=document.querySelector('.brand .sub');
+  if(brandSub)brandSub.innerText=t('brand.sub');
+  /* 6. html lang */
+  document.documentElement.lang=curLang==='en'?'en':'zh-CN';
+}
+function setLang(l){curLang=l;localStorage.setItem('wwgs_lang',l);
+  document.querySelectorAll('#lang-sw button').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));
+  applyI18n();
+}
+document.querySelectorAll('#lang-sw button').forEach(b=>{
+  b.addEventListener('click',()=>setLang(b.dataset.lang));
+});
+/* 初始 */
+document.querySelectorAll('#lang-sw button').forEach(b=>b.classList.toggle('on',b.dataset.lang===curLang));
+setTimeout(applyI18n,100);
+
+/* ================== v15.2 Timeline 50-year ================== */
+/* 数据:1975-2025 每 5 年一个采样点,基于 IUCN 和国家名录大致趋势。
+   起点假设 1975 年约 88 种被重点关注,到 2025 约 256 种。 */
+const TL_DATA=[
+  {y:1975,n:88,ev:{zh:"《中华人民共和国野生动物保护法》酝酿期",en:"Pre-enactment of Wildlife Conservation Law"}},
+  {y:1980,n:102,ev:{zh:"中国加入 CITES 公约",en:"China joins CITES"}},
+  {y:1985,n:121,ev:{zh:"白鳍豚保护运动全国展开",en:"Baiji dolphin conservation campaign"}},
+  {y:1988,n:138,ev:{zh:"《野生动物保护法》正式颁布",en:"Wildlife Conservation Law enacted"}},
+  {y:1990,n:146,ev:{zh:"首版国家重点保护野生动物名录发布",en:"First National Protected Species List"}},
+  {y:1995,n:162,ev:{zh:"天然林保护工程启动",en:"Natural Forest Protection Program launched"}},
+  {y:2000,n:178,ev:{zh:"藏羚羊盗猎危机高峰",en:"Tibetan antelope poaching crisis peaks"}},
+  {y:2005,n:192,ev:{zh:"朱鹮种群突破 500 只",en:"Crested ibis population exceeds 500"}},
+  {y:2007,n:198,ev:{zh:"白鳍豚被宣布功能性灭绝",en:"Baiji declared functionally extinct"}},
+  {y:2010,n:208,ev:{zh:"大熊猫保护区体系初步建成",en:"Giant Panda reserves network formed"}},
+  {y:2015,n:222,ev:{zh:"中国在非洲象牙贸易中率先全面禁售",en:"China bans domestic ivory trade"}},
+  {y:2018,n:234,ev:{zh:"东北虎豹国家公园设立",en:"NE Tiger & Leopard National Park established"}},
+  {y:2020,n:246,ev:{zh:"新修订《野生动物保护法》实施",en:"Revised Wildlife Law enforced"}},
+  {y:2021,n:252,ev:{zh:"大熊猫由『濒危』降级为『易危』",en:"Giant Panda downlisted to Vulnerable"}},
+  {y:2023,n:254,ev:{zh:"长江十年禁渔成效显著",en:"Yangtze 10-year fishing ban shows results"}},
+  {y:2025,n:256,ev:{zh:"万物共生数字生态志上线",en:"Living Atlas digital ecology launched"}}
+];
+
+function buildTimelineSVG(){
+  const svg=document.getElementById('tl-svg');
+  const W=1000,H=440,mL=60,mR=30,mT=30,mB=50;
+  const xs=TL_DATA.map(d=>d.y),ys=TL_DATA.map(d=>d.n);
+  const xMin=Math.min(...xs),xMax=Math.max(...xs);
+  const yMin=0,yMax=Math.ceil(Math.max(...ys)/50)*50+20;
+  const x=v=>mL+(v-xMin)/(xMax-xMin)*(W-mL-mR);
+  const y=v=>H-mB-(v-yMin)/(yMax-yMin)*(H-mT-mB);
+  let out='';
+  /* 网格 */
+  for(let i=0;i<=5;i++){
+    const yv=yMin+(yMax-yMin)*i/5;
+    out+=`<line x1="${mL}" y1="${y(yv)}" x2="${W-mR}" y2="${y(yv)}" stroke="rgba(200,160,87,.08)" stroke-dasharray="2 4"/>`;
+    out+=`<text x="${mL-8}" y="${y(yv)+4}" fill="#8a8e94" font-size="10" text-anchor="end" font-family="Noto Serif SC,serif">${Math.round(yv)}</text>`;
+  }
+  /* X 轴标签 */
+  [1975,1985,1995,2005,2015,2025].forEach(yr=>{
+    out+=`<line x1="${x(yr)}" y1="${H-mB}" x2="${x(yr)}" y2="${H-mB+4}" stroke="rgba(200,160,87,.35)"/>`;
+    out+=`<text x="${x(yr)}" y="${H-mB+18}" fill="#8a8e94" font-size="10" text-anchor="middle" font-family="Noto Serif SC,serif">${yr}</text>`;
+  });
+  /* 填充 + 线 */
+  const line=TL_DATA.map(d=>`${x(d.y)},${y(d.n)}`).join(' ');
+  const area=`M ${x(TL_DATA[0].y)},${H-mB} L ${TL_DATA.map(d=>`${x(d.y)},${y(d.n)}`).join(' L ')} L ${x(TL_DATA[TL_DATA.length-1].y)},${H-mB} Z`;
+  out+=`<defs><linearGradient id="tlG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#C8A057" stop-opacity="0.55"/>
+    <stop offset="100%" stop-color="#C8A057" stop-opacity="0"/>
+  </linearGradient></defs>`;
+  out+=`<path d="${area}" fill="url(#tlG)" id="tl-area" style="clip-path:inset(0 100% 0 0);transition:clip-path 1.5s var(--ease-cine)"/>`;
+  out+=`<polyline points="${line}" fill="none" stroke="#C8A057" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="tl-line" style="stroke-dasharray:3000;stroke-dashoffset:3000;transition:stroke-dashoffset 2.4s var(--ease-cine)"/>`;
+  /* 关键事件点 */
+  TL_DATA.forEach((d,i)=>{
+    const cx=x(d.y),cy=y(d.n);
+    out+=`<circle cx="${cx}" cy="${cy}" r="3" fill="#0f1419" stroke="#C8A057" stroke-width="1.5" data-i="${i}" class="tl-dot"/>`;
+  });
+  /* 游标 */
+  out+=`<line x1="${x(xs[0])}" y1="${mT}" x2="${x(xs[0])}" y2="${H-mB}" stroke="rgba(244,229,184,.6)" stroke-width="1" stroke-dasharray="3 3" id="tl-cursor"/>`;
+  out+=`<circle cx="${x(xs[0])}" cy="${y(ys[0])}" r="6" fill="#F8EBC6" stroke="#C8A057" stroke-width="2" id="tl-pt" style="filter:drop-shadow(0 0 8px #C8A057)"/>`;
+  svg.innerHTML=out;
+  return {x,y};
+}
+
+let tlState={idx:0,playing:false,timer:null,speed:1,pos:null};
+function openTimeline(){
+  document.getElementById('timeline').classList.add('show');
+  document.body.style.overflow='hidden';
+  tlState.pos=buildTimelineSVG();
+  setTimeout(()=>{
+    const a=document.getElementById('tl-area');if(a)a.style.clipPath='inset(0 0 0 0)';
+    const l=document.getElementById('tl-line');if(l)l.style.strokeDashoffset='0';
+  },60);
+  tlUpdate(0);
+}
+function closeTimeline(){
+  document.getElementById('timeline').classList.remove('show');
+  document.body.style.overflow='';
+  tlPause();
+}
+function tlUpdate(i){
+  tlState.idx=i;
+  const d=TL_DATA[i];
+  document.getElementById('tl-year').innerText=d.y;
+  document.getElementById('tl-val-n').innerText=d.n;
+  document.getElementById('tl-events').innerHTML=`<b>${d.y}</b> · ${d.ev[curLang]||d.ev.zh}`;
+  document.getElementById('tl-slider').value=i;
+  if(tlState.pos){
+    const cx=tlState.pos.x(d.y),cy=tlState.pos.y(d.n);
+    const c=document.getElementById('tl-cursor');
+    if(c){c.setAttribute('x1',cx);c.setAttribute('x2',cx)}
+    const p=document.getElementById('tl-pt');
+    if(p){p.setAttribute('cx',cx);p.setAttribute('cy',cy)}
+  }
+}
+function tlPlay(){
+  if(tlState.playing)return;
+  tlState.playing=true;
+  document.getElementById('tl-play').innerText='❚❚';
+  tlState.timer=setInterval(()=>{
+    let n=tlState.idx+1;
+    if(n>=TL_DATA.length){tlPause();return}
+    tlUpdate(n);
+  },900/tlState.speed);
+}
+function tlPause(){
+  tlState.playing=false;clearInterval(tlState.timer);
+  const p=document.getElementById('tl-play');if(p)p.innerText='▶';
+}
+document.getElementById('btn-timeline').addEventListener('click',openTimeline);
+document.getElementById('tl-close').addEventListener('click',closeTimeline);
+document.getElementById('tl-play').addEventListener('click',()=>tlState.playing?tlPause():tlPlay());
+document.getElementById('tl-slider').addEventListener('input',e=>{tlPause();tlUpdate(+e.target.value)});
+document.getElementById('tl-slider').max=TL_DATA.length-1;
+document.getElementById('tl-speed').addEventListener('click',()=>{
+  const seq=[1,2,4];const cur=seq.indexOf(tlState.speed);
+  tlState.speed=seq[(cur+1)%seq.length];
+  document.getElementById('tl-speed').innerText=tlState.speed+'x';
+  if(tlState.playing){tlPause();tlPlay()}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('timeline').classList.contains('show'))closeTimeline()});
+
+/* ================== 工具条出现时机:开场结束后 ================== */
+const _origEnd15=endCine;
+endCine=function(){_origEnd15();setTimeout(()=>{document.getElementById('v15-tools').classList.add('reveal')},800)};
+
 </script>
 
 <!-- v14.6 Reveal Overlay -->
@@ -1714,6 +2067,37 @@ endCine=function(){_origEnd();setTimeout(updateFab,400)};
       </div>
     </div>
   </div>
+</div>
+
+
+<!-- v15 工具条 -->
+<div id="v15-tools">
+  <button id="btn-timeline"><span class="ico">📉</span><span data-i18n="tool.timeline">50 年物种变化</span></button>
+  </div>
+
+<!-- v15.2 Timeline -->
+<div id="timeline">
+  <button class="tl-close" id="tl-close">✕</button>
+  <div class="tl-head">
+    <div class="tl-tag" data-i18n="tl.tag">HALF-CENTURY · 1975 — 2025</div>
+    <h2 data-i18n="tl.title">五十年之殇</h2>
+    <div class="tl-sub" data-i18n="tl.sub">Fifty Years of Endangered Species Decline in China</div>
+  </div>
+  <div class="tl-wrap">
+    <svg id="tl-svg" viewBox="0 0 1000 440" preserveAspectRatio="none"></svg>
+    <div class="tl-year" id="tl-year">1975</div>
+    <div class="tl-val">
+      <div class="n" id="tl-val-n">—</div>
+      <div class="l" data-i18n="tl.val">濒危物种数(种)</div>
+    </div>
+  </div>
+  <div class="tl-events" id="tl-events">—</div>
+  <div class="tl-ctrl">
+    <button class="tl-play" id="tl-play">▶</button>
+    <input class="tl-slider" id="tl-slider" type="range" min="0" max="50" value="0"/>
+    <div class="tl-speed" id="tl-speed">1x</div>
+  </div>
+</div>
 </div>
 
 </body>
