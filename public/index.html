@@ -347,7 +347,7 @@ document.getElementById('btn-rot').onclick=function(){oc.autoRotate=!oc.autoRota
 document.getElementById('btn-rst').onclick=()=>{const sC=cam.position.clone(),sT=oc.target.clone();const o={t:0};tw(o,{t:1},900,e=>{cam.position.lerpVectors(sC,new THREE.Vector3(0,90,130),e);oc.target.lerpVectors(sT,new THREE.Vector3(0,0,0),e)})};
 
 /* Load */
-fetch("https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json")
+fetch("./china_geo.json")
 .then(r=>r.json()).then(async geo=>{
   await buildMap(geo);
   document.getElementById('loading').style.display='none';
