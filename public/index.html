@@ -2,64 +2,606 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8"/>
-<title>中国濒危动物 3D 地图</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>万物共生 · 中国濒危动物数字志</title>
 <style>
+:root{
+  --ink:#0F1419;--ink-2:#151B23;--ink-3:#1D2530;
+  --gold:#C8A057;--gold-soft:#E2C27A;--gold-deep:#8B6F3A;
+  --jade:#3E7C5C;--jade-soft:#68A585;
+  --mist:#E7E2D6;--mist-dim:#B8B1A0;--mist-low:#6E6A5E;
+  --danger-cr:#C0392B;--danger-en:#D47A3A;--danger-vu:#B9923B;--danger-nt:#3F7A89;
+  --panel-bg:rgba(15,20,25,.88);--panel-bd:rgba(200,160,87,.22);
+  --shadow-lux:0 20px 60px rgba(0,0,0,.55),0 0 0 1px rgba(200,160,87,.12) inset;
+  --ease-cine:cubic-bezier(.22,1,.36,1);
+}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;background:#020a14;color:#fff;font-family:"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
-#app{width:100%;height:100%}
-#loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 60%,#0c1e38 0%,#020a14 100%);z-index:50}
-.loader{width:46px;height:46px;border-radius:50%;border:3px solid rgba(100,200,255,.12);border-top-color:#6cb8ff;animation:spin .8s linear infinite;margin-bottom:18px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.ltxt{font-size:14px;letter-spacing:3px;color:#6cb8ff}
-.lsub{font-size:10px;color:#3d6d99;margin-top:6px}
-#hdr{position:fixed;top:0;left:0;right:0;height:54px;z-index:10;background:linear-gradient(180deg,rgba(2,8,18,.95) 0%,rgba(2,8,18,0) 100%);display:flex;align-items:center;padding:0 22px;pointer-events:none}
+html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
+  font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.serif{font-family:"Noto Serif SC","Songti SC","STSong",serif;font-weight:500;letter-spacing:.04em}
+#app{width:100%;height:100%;opacity:0;transition:opacity 1.6s var(--ease-cine) .2s}
+#app.reveal{opacity:1}
+
+/* ========== 开场电影序幕 ========== */
+#cine{position:fixed;inset:0;z-index:90;background:
+  radial-gradient(ellipse at 50% 55%,#1B2028 0%,#0A0D12 65%,#05080C 100%);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  overflow:hidden;pointer-events:none}
+#cine.fadeout{animation:cineOut 1.4s var(--ease-cine) forwards}
+@keyframes cineOut{to{opacity:0;visibility:hidden}}
+
+/* 粒子星尘背景 */
+#cine::before,#cine::after{content:"";position:absolute;inset:-20%;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%,rgba(200,160,87,.5) 50%,transparent 52%),
+    radial-gradient(1px 1px at 80% 20%,rgba(231,226,214,.35) 50%,transparent 52%),
+    radial-gradient(1px 1px at 50% 70%,rgba(200,160,87,.4) 50%,transparent 52%),
+    radial-gradient(1px 1px at 30% 85%,rgba(231,226,214,.3) 50%,transparent 52%),
+    radial-gradient(1px 1px at 65% 50%,rgba(200,160,87,.3) 50%,transparent 52%),
+    radial-gradient(1px 1px at 90% 75%,rgba(231,226,214,.4) 50%,transparent 52%);
+  background-size:600px 600px;opacity:0;animation:dust 3.2s var(--ease-cine) .8s forwards}
+#cine::after{background-size:420px 420px;animation-delay:1s;animation-duration:3s}
+@keyframes dust{0%{opacity:0;transform:scale(1.1)}100%{opacity:.9;transform:scale(1)}}
+
+/* 朱鹮剪影飞过 */
+.bird{position:absolute;left:-15%;top:32%;width:110px;height:70px;opacity:0;
+  animation:flyBy 4.2s var(--ease-cine) .2s forwards;filter:drop-shadow(0 0 18px rgba(200,160,87,.55))}
+.bird svg{width:100%;height:100%}
+.bird .wing{transform-origin:50% 50%;animation:flap 1.1s ease-in-out infinite}
+@keyframes flyBy{
+  0%{left:-15%;top:38%;opacity:0;transform:scale(.55) rotate(-4deg)}
+  15%{opacity:1}
+  50%{left:50%;top:22%;transform:scale(.8) rotate(2deg)}
+  85%{opacity:.85}
+  100%{left:115%;top:18%;opacity:0;transform:scale(.9) rotate(5deg)}
+}
+@keyframes flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.55)}}
+
+/* 品牌标题 */
+.brand{text-align:center;position:relative;z-index:2}
+.brand .logo-line{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 50%,transparent);
+  margin:0 auto 22px;animation:lineGrow 1.2s var(--ease-cine) 1.6s forwards}
+@keyframes lineGrow{to{width:200px}}
+.brand h1{font-family:"Noto Serif SC","Songti SC",serif;font-weight:500;
+  font-size:clamp(44px,7vw,88px);letter-spacing:.28em;color:var(--mist);
+  opacity:0;transform:translateY(18px);
+  animation:titleIn 1.6s var(--ease-cine) 1.9s forwards;
+  text-shadow:0 0 40px rgba(200,160,87,.25)}
+.brand h1 .glow{background:linear-gradient(180deg,#F4E5B8 0%,var(--gold) 55%,var(--gold-deep) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding:0 .08em}
+@keyframes titleIn{to{opacity:1;transform:translateY(0)}}
+.brand .tag{margin-top:22px;font-size:14px;letter-spacing:.6em;color:var(--gold-soft);
+  opacity:0;animation:tagIn 1.2s var(--ease-cine) 2.8s forwards;font-weight:300}
+.brand .tag::before,.brand .tag::after{content:"·";margin:0 .8em;color:var(--gold-deep)}
+@keyframes tagIn{to{opacity:.95}}
+.brand .sub{margin-top:16px;font-size:11px;letter-spacing:.35em;color:var(--mist-low);
+  opacity:0;animation:tagIn 1.2s var(--ease-cine) 3.3s forwards}
+
+/* 底部进度与 skip */
+.cine-foot{position:absolute;bottom:36px;left:0;right:0;display:flex;flex-direction:column;
+  align-items:center;gap:10px;opacity:0;animation:tagIn 1s var(--ease-cine) 3.6s forwards}
+.cine-prog{width:180px;height:2px;background:rgba(200,160,87,.15);border-radius:2px;overflow:hidden}
+.cine-prog>i{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));
+  animation:progFill 2s var(--ease-cine) 3.6s forwards}
+@keyframes progFill{to{width:100%}}
+.cine-skip{font-size:10px;letter-spacing:.3em;color:var(--mist-low);cursor:pointer;pointer-events:auto;
+  padding:6px 14px;border:1px solid rgba(200,160,87,.18);border-radius:20px;transition:.3s;background:transparent;color:var(--mist-low)}
+.cine-skip:hover{color:var(--gold);border-color:var(--gold)}
+
+/* ========== 顶部导航 ========== */
+#hdr{position:fixed;top:0;left:0;right:0;height:66px;z-index:20;
+  background:linear-gradient(180deg,rgba(10,13,18,.82) 0%,rgba(10,13,18,0) 100%);
+  display:flex;align-items:center;padding:0 28px;pointer-events:none;
+  opacity:0;transform:translateY(-12px);transition:all .9s var(--ease-cine) .4s}
+#hdr.reveal{opacity:1;transform:translateY(0)}
 #hdr *{pointer-events:auto}
-#hdr h1{font-size:17px;font-weight:700;letter-spacing:3px;background:linear-gradient(90deg,#6cb8ff,#ffd770);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-#hdr .sub{font-size:10px;color:#5a8ab5;margin-left:12px}
-.ctrls{position:fixed;top:12px;right:14px;z-index:15;display:none;gap:5px}
-.ctrls button{background:rgba(8,18,36,.88);color:#a0c4e0;border:1px solid rgba(80,150,220,.3);padding:4px 10px;border-radius:14px;cursor:pointer;font-size:10px;transition:.2s;backdrop-filter:blur(6px)}
-.ctrls button:hover{border-color:#ffd770;color:#ffd770}
-.ctrls button.on{background:linear-gradient(135deg,#ffd770,#e8a030);color:#1a2a45;border-color:transparent;font-weight:600}
-#legend{position:fixed;bottom:14px;left:14px;z-index:10;background:rgba(6,14,30,.9);padding:10px 14px;border:1px solid rgba(80,150,220,.18);border-radius:8px;font-size:10px;line-height:2;backdrop-filter:blur(6px);display:none}
-#legend h4{margin:0 0 2px;font-size:10px;color:#ffd770;letter-spacing:2px}
-.sw{display:inline-block;width:10px;height:6px;margin-right:4px;vertical-align:middle;border-radius:2px}
-#tooltip{position:fixed;pointer-events:none;z-index:20;background:rgba(4,12,28,.94);border:1px solid rgba(80,160,240,.4);padding:8px 12px;border-radius:8px;font-size:11px;display:none;max-width:260px;backdrop-filter:blur(6px);box-shadow:0 2px 16px rgba(0,0,0,.5)}
-#panel{position:fixed;right:10px;top:52px;width:370px;max-height:calc(100vh - 64px);overflow-y:auto;z-index:30;background:rgba(4,12,28,.96);border:1px solid rgba(80,160,240,.25);box-shadow:0 0 30px rgba(0,80,200,.12);border-radius:14px;padding:0;backdrop-filter:blur(12px);display:none;transform:translateX(30px);opacity:0;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .5s}
+#hdr .mark{display:flex;align-items:center;gap:12px}
+#hdr .mark::before{content:"";width:6px;height:22px;background:linear-gradient(180deg,var(--gold),var(--gold-deep));border-radius:2px}
+#hdr h1{font-family:"Noto Serif SC",serif;font-size:20px;font-weight:500;letter-spacing:.2em;
+  background:linear-gradient(180deg,#F4E5B8,var(--gold) 60%,var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#hdr .sub{font-size:10px;color:var(--mist-low);margin-left:16px;letter-spacing:.25em;
+  padding-left:16px;border-left:1px solid rgba(200,160,87,.2)}
+#hdr .nav{margin-left:auto;display:flex;gap:6px;align-items:center}
+#hdr .nav a{font-size:11px;color:var(--mist-dim);letter-spacing:.2em;text-decoration:none;
+  padding:8px 14px;border-radius:18px;transition:.3s;cursor:pointer}
+#hdr .nav a:hover{color:var(--gold);background:rgba(200,160,87,.08)}
+
+/* 控制器 */
+.ctrls{position:fixed;top:78px;right:18px;z-index:15;display:none;gap:6px;
+  opacity:0;transform:translateY(-6px);transition:all .7s var(--ease-cine) .9s}
+.ctrls.reveal{opacity:1;transform:translateY(0);display:flex}
+.ctrls button{background:rgba(15,20,25,.78);color:var(--mist-dim);
+  border:1px solid rgba(200,160,87,.22);padding:6px 14px;border-radius:18px;cursor:pointer;
+  font-size:10px;letter-spacing:.2em;transition:.3s;backdrop-filter:blur(10px)}
+.ctrls button:hover{border-color:var(--gold);color:var(--gold)}
+.ctrls button.on{background:linear-gradient(135deg,var(--gold),var(--gold-deep));
+  color:var(--ink);border-color:transparent;font-weight:600}
+
+/* 图例 */
+#legend{position:fixed;bottom:20px;left:20px;z-index:10;
+  background:var(--panel-bg);padding:14px 18px;border:1px solid var(--panel-bd);
+  border-radius:12px;font-size:10px;line-height:2;backdrop-filter:blur(14px);display:none;
+  opacity:0;transform:translateY(10px);transition:all .8s var(--ease-cine) 1.1s;
+  box-shadow:var(--shadow-lux)}
+#legend.reveal{opacity:1;transform:translateY(0);display:block}
+#legend h4{margin:0 0 4px;font-size:10px;color:var(--gold);letter-spacing:.3em;font-weight:500;
+  font-family:"Noto Serif SC",serif}
+#legend div{color:var(--mist-dim);letter-spacing:.1em}
+.sw{display:inline-block;width:14px;height:6px;margin-right:6px;vertical-align:middle;border-radius:3px}
+
+/* Tooltip */
+#tooltip{position:fixed;pointer-events:none;z-index:25;
+  background:var(--panel-bg);border:1px solid var(--panel-bd);
+  padding:10px 14px;border-radius:10px;font-size:11px;display:none;max-width:280px;
+  backdrop-filter:blur(14px);box-shadow:var(--shadow-lux);color:var(--mist)}
+#tooltip b{font-family:"Noto Serif SC",serif;font-weight:500;font-size:13px}
+
+/* ========== 详情抽屉 ========== */
+#panel{position:fixed;right:14px;top:78px;width:380px;max-height:calc(100vh - 96px);
+  overflow-y:auto;z-index:30;background:var(--panel-bg);
+  border:1px solid var(--panel-bd);box-shadow:var(--shadow-lux);
+  border-radius:14px;padding:0;backdrop-filter:blur(18px);display:none;
+  transform:translateX(34px);opacity:0;
+  transition:transform .6s var(--ease-cine),opacity .5s var(--ease-cine)}
 #panel.show{transform:translateX(0);opacity:1}
 #panel::-webkit-scrollbar{width:3px}
-#panel::-webkit-scrollbar-thumb{background:rgba(80,160,240,.25);border-radius:2px}
-.p-close{position:absolute;top:10px;right:12px;cursor:pointer;color:#5a8ab5;font-size:16px;z-index:5;transition:.2s;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(0,0,0,.45)}
-.p-close:hover{color:#fff;background:rgba(255,255,255,.15)}
-.p-hero{width:100%;height:180px;object-fit:cover;border-radius:14px 14px 0 0;display:block;background:#0a1828}
-.ph{display:flex;align-items:center;justify-content:center;height:180px;color:#3d5a7a;font-size:11px;border-radius:14px 14px 0 0;background:#0a1828}
-.p-tabs{display:flex;gap:0;overflow-x:auto;padding:0 14px;border-bottom:1px solid rgba(80,160,240,.1);position:relative;z-index:5}
+#panel::-webkit-scrollbar-thumb{background:rgba(200,160,87,.3);border-radius:2px}
+.p-close{position:absolute;top:12px;right:14px;cursor:pointer;color:var(--mist-dim);
+  font-size:16px;z-index:5;transition:.3s;width:28px;height:28px;display:flex;
+  align-items:center;justify-content:center;border-radius:50%;background:rgba(0,0,0,.55);
+  border:1px solid rgba(200,160,87,.25)}
+.p-close:hover{color:var(--gold);background:rgba(200,160,87,.12);border-color:var(--gold);transform:rotate(90deg)}
+.p-hero{width:100%;height:200px;object-fit:cover;border-radius:14px 14px 0 0;display:block;background:var(--ink-2)}
+.p-hero-wrap{position:relative;border-radius:14px 14px 0 0;overflow:hidden}
+.p-hero-wrap::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,rgba(15,20,25,.85) 100%);pointer-events:none}
+.ph{display:flex;align-items:center;justify-content:center;height:200px;
+  color:var(--mist-low);font-size:11px;border-radius:14px 14px 0 0;background:var(--ink-2);
+  letter-spacing:.3em}
+
+.p-tabs{display:flex;gap:0;overflow-x:auto;padding:0 14px;
+  border-bottom:1px solid rgba(200,160,87,.12);position:relative;z-index:5}
 .p-tabs::-webkit-scrollbar{height:0}
-.p-tab{flex-shrink:0;padding:10px 14px;font-size:12px;color:#5a8ab5;cursor:pointer;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap;user-select:none;-webkit-tap-highlight-color:transparent}
-.p-tab:hover{color:#c0d8ee;background:rgba(80,160,240,.06)}
-.p-tab.active{color:#ffd770;border-bottom-color:#ffd770;font-weight:600;background:rgba(255,215,112,.05)}
-.p-tab .tab-lv{font-size:8px;padding:1px 5px;border-radius:4px;margin-left:4px;vertical-align:middle;font-weight:600;color:#fff}
-.p-body{padding:14px 18px 18px}
-.p-prov{font-size:10px;color:#5a8ab5;letter-spacing:2px;margin-bottom:3px}
-.p-name{font-size:22px;font-weight:700;color:#ffd770;margin-bottom:2px}
-.p-latin{color:#6a9abc;font-style:italic;font-size:11px;margin-bottom:8px}
-.p-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.p-tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:600}
-.p-tag.CR{background:linear-gradient(135deg,#dc2626,#991b1b)}.p-tag.EN{background:linear-gradient(135deg,#ea580c,#9a3412)}.p-tag.VU{background:linear-gradient(135deg,#ca8a04,#854d0e)}.p-tag.NT{background:linear-gradient(135deg,#0891b2,#155e75)}
-.p-terrain-tag{display:inline-block;font-size:10px;color:#5a8ab5;border:1px solid rgba(80,160,240,.2);padding:2px 8px;border-radius:8px}
-.p-desc{font-size:12px;line-height:1.85;color:#b8d0e8}
-.p-count{font-size:10px;color:#4a7a9a;margin-top:10px;padding-top:8px;border-top:1px solid rgba(80,160,240,.08)}
-.p-video{margin-top:12px;margin-bottom:2px}
-.p-video a{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:22px;font-size:12px;font-weight:600;text-decoration:none;transition:all .3s;letter-spacing:1px;cursor:pointer;background:linear-gradient(135deg,rgba(254,44,85,.12),rgba(37,244,238,.06));border:1px solid rgba(254,44,85,.35);color:#fe2c55}
-.p-video a:hover{background:linear-gradient(135deg,rgba(254,44,85,.28),rgba(37,244,238,.12));border-color:#fe2c55;transform:translateY(-1px);box-shadow:0 4px 16px rgba(254,44,85,.22)}
-.p-video a:active{transform:scale(.96)}
+.p-tab{flex-shrink:0;padding:12px 16px;font-size:12px;color:var(--mist-low);
+  cursor:pointer;border-bottom:2px solid transparent;transition:.3s;white-space:nowrap;
+  user-select:none;-webkit-tap-highlight-color:transparent;letter-spacing:.08em}
+.p-tab:hover{color:var(--mist);background:rgba(200,160,87,.05)}
+.p-tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600;
+  background:rgba(200,160,87,.06)}
+.p-tab .tab-lv{font-size:9px;padding:1px 6px;border-radius:4px;margin-left:5px;
+  vertical-align:middle;font-weight:600;color:#fff;letter-spacing:.05em}
+
+.p-body{padding:16px 20px 22px}
+.p-prov{font-size:10px;color:var(--gold-deep);letter-spacing:.35em;margin-bottom:6px;font-weight:500}
+.p-name{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:500;
+  color:var(--mist);margin-bottom:4px;letter-spacing:.06em}
+.p-latin{color:var(--mist-low);font-style:italic;font-size:11px;margin-bottom:12px;letter-spacing:.05em}
+.p-meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.p-tag{display:inline-block;padding:3px 12px;border-radius:12px;font-size:10px;
+  font-weight:600;letter-spacing:.1em;color:#fff}
+.p-tag.CR{background:linear-gradient(135deg,#C0392B,#7A1E13)}
+.p-tag.EN{background:linear-gradient(135deg,#D47A3A,#8A4415)}
+.p-tag.VU{background:linear-gradient(135deg,#B9923B,#6B521A)}
+.p-tag.NT{background:linear-gradient(135deg,#3F7A89,#1E4751)}
+.p-terrain-tag{display:inline-block;font-size:10px;color:var(--jade-soft);
+  border:1px solid rgba(62,124,92,.35);padding:3px 10px;border-radius:10px;background:rgba(62,124,92,.08);
+  letter-spacing:.1em}
+.p-desc{font-size:13px;line-height:1.95;color:var(--mist-dim);letter-spacing:.02em}
+.p-count{font-size:10px;color:var(--mist-low);margin-top:14px;padding-top:10px;
+  border-top:1px solid rgba(200,160,87,.08);letter-spacing:.2em}
+
+.p-video{margin-top:16px;margin-bottom:4px}
+.p-video a{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;
+  border-radius:24px;font-size:12px;font-weight:600;text-decoration:none;
+  transition:all .35s var(--ease-cine);letter-spacing:.15em;cursor:pointer;
+  background:linear-gradient(135deg,rgba(254,44,85,.14),rgba(200,160,87,.08));
+  border:1px solid rgba(254,44,85,.38);color:#fe2c55}
+.p-video a:hover{background:linear-gradient(135deg,rgba(254,44,85,.3),rgba(200,160,87,.14));
+  border-color:#fe2c55;transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(254,44,85,.28),0 0 0 1px rgba(254,44,85,.3)}
+.p-video a:active{transform:scale(.97)}
 .p-video a svg{flex-shrink:0}
+
+/* 呼吸光提示环 */
+@keyframes breath{0%,100%{opacity:.4}50%{opacity:.9}}
+
+/* 移动端基础适配 */
+@media (max-width:720px){
+  #hdr{height:56px;padding:0 16px}
+  #hdr h1{font-size:16px;letter-spacing:.16em}
+  #hdr .sub{display:none}
+  #hdr .nav a{padding:6px 10px;font-size:10px}
+  #panel{right:8px;left:8px;top:64px;width:auto;max-height:55vh}
+  .ctrls{top:64px;right:10px}
+  #legend{bottom:12px;left:12px;padding:10px 14px;font-size:9px}
+  .brand h1{font-size:clamp(36px,11vw,56px);letter-spacing:.2em}
+  .brand .tag{font-size:11px;letter-spacing:.4em}
+}
+
+/* ===== L1 Hover 浮层卡（升级 tooltip 富卡片） ===== */
+#tooltip{padding:0!important;max-width:240px!important;overflow:hidden}
+.tip-card{display:block}
+.tip-head{padding:10px 14px 8px;border-bottom:1px solid rgba(200,160,87,.12);display:flex;align-items:center;gap:10px}
+.tip-prov{font-family:"Noto Serif SC",serif;font-size:15px;color:var(--mist);letter-spacing:.08em;flex:1;font-weight:500}
+.tip-ring{width:34px;height:34px;position:relative;flex-shrink:0}
+.tip-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.tip-ring .t-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);font-family:"Noto Serif SC",serif}
+.tip-body{padding:8px 14px 10px}
+.tip-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mist-dim);margin-bottom:4px}
+.tip-row .dot{width:6px;height:6px;border-radius:50%}
+.tip-row b{color:var(--mist);font-family:"Noto Serif SC",serif;font-weight:500;letter-spacing:.03em}
+.tip-row .lv-chip{font-size:9px;padding:1px 6px;border-radius:4px;color:#fff;font-weight:600;margin-left:auto;letter-spacing:.05em}
+.tip-cta{padding:6px 14px 10px;font-size:10px;color:var(--gold);letter-spacing:.25em;border-top:1px solid rgba(200,160,87,.1);margin-top:2px}
+.tip-cta::after{content:" →";color:var(--gold-soft)}
+
+/* ===== L2 抽屉：深入了解按钮 ===== */
+.p-deep{display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:14px;padding:13px 20px;border-radius:12px;font-size:12px;font-weight:600;
+  letter-spacing:.3em;cursor:pointer;text-align:center;transition:all .35s var(--ease-cine);
+  background:linear-gradient(135deg,rgba(200,160,87,.12),rgba(200,160,87,.04));
+  border:1px solid rgba(200,160,87,.38);color:var(--gold);
+  font-family:"Noto Serif SC",serif}
+.p-deep:hover{background:linear-gradient(135deg,rgba(200,160,87,.25),rgba(200,160,87,.08));
+  border-color:var(--gold);transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(200,160,87,.18),0 0 0 1px rgba(200,160,87,.3)}
+.p-deep:active{transform:scale(.98)}
+.p-deep .arr{display:inline-block;transition:transform .3s}
+.p-deep:hover .arr{transform:translateX(4px)}
+
+/* ===== L3 沉浸长页 ===== */
+#immer{position:fixed;inset:0;z-index:80;background:var(--ink);
+  opacity:0;pointer-events:none;transition:opacity .6s var(--ease-cine);
+  overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
+#immer.open{opacity:1;pointer-events:auto}
+#immer::-webkit-scrollbar{width:4px}
+#immer::-webkit-scrollbar-track{background:var(--ink)}
+#immer::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--gold-deep),var(--gold));border-radius:2px}
+
+.im-close{position:fixed;top:24px;right:28px;z-index:85;width:42px;height:42px;
+  border-radius:50%;background:rgba(15,20,25,.78);border:1px solid rgba(200,160,87,.32);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--mist-dim);font-size:16px;transition:.3s;backdrop-filter:blur(10px)}
+.im-close:hover{color:var(--gold);border-color:var(--gold);background:rgba(200,160,87,.12);transform:rotate(90deg)}
+
+.im-prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-soft));
+  z-index:86;width:0;transition:width .2s linear}
+
+.im-nav{position:fixed;left:28px;top:50%;transform:translateY(-50%);z-index:85;
+  display:flex;flex-direction:column;gap:14px;opacity:0;transition:opacity .4s .2s}
+.im-nav.show{opacity:1}
+.im-nav a{width:10px;height:10px;border-radius:50%;background:rgba(200,160,87,.18);
+  border:1px solid rgba(200,160,87,.4);cursor:pointer;transition:.3s;position:relative}
+.im-nav a::after{content:attr(data-l);position:absolute;left:20px;top:50%;transform:translateY(-50%);
+  font-size:10px;color:var(--mist-low);letter-spacing:.25em;white-space:nowrap;
+  opacity:0;transition:.3s;pointer-events:none;font-weight:500}
+.im-nav a:hover::after{opacity:1}
+.im-nav a:hover,.im-nav a.active{background:var(--gold);border-color:var(--gold);
+  box-shadow:0 0 12px rgba(200,160,87,.6)}
+.im-nav a.active::after{opacity:1;color:var(--gold)}
+
+/* 通用章节 */
+.im-sec{min-height:100vh;padding:100px 8vw 80px;position:relative;max-width:1200px;margin:0 auto}
+.im-sec .sec-num{font-family:"Noto Serif SC",serif;font-size:84px;color:rgba(200,160,87,.08);
+  position:absolute;top:60px;right:8vw;line-height:1;font-weight:500;user-select:none;pointer-events:none}
+.im-sec .sec-label{font-size:11px;letter-spacing:.45em;color:var(--gold);margin-bottom:12px;font-weight:500}
+.im-sec .sec-label::before{content:"";display:inline-block;width:28px;height:1px;background:var(--gold);vertical-align:middle;margin-right:14px}
+.im-sec h2{font-family:"Noto Serif SC",serif;font-size:clamp(32px,4vw,52px);font-weight:500;
+  color:var(--mist);letter-spacing:.1em;margin-bottom:18px;line-height:1.3}
+.im-sec .sub{font-style:italic;color:var(--mist-low);font-size:13px;letter-spacing:.06em;margin-bottom:30px}
+.im-sec p{font-size:15px;line-height:2.1;color:var(--mist-dim);letter-spacing:.03em;max-width:760px}
+
+/* HERO */
+.im-hero{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:100px 8vw 60px;position:relative;overflow:hidden;max-width:none}
+.im-hero .bg{position:absolute;inset:0;background-size:cover;background-position:center;
+  filter:blur(8px) brightness(.45);transform:scale(1.08);z-index:0}
+.im-hero .bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(15,20,25,.7) 0%,rgba(15,20,25,.92) 100%)}
+.im-hero .inner{position:relative;z-index:2;max-width:860px;text-align:center}
+.im-hero .prov{font-size:13px;letter-spacing:.5em;color:var(--gold);margin-bottom:24px}
+.im-hero h1{font-family:"Noto Serif SC",serif;font-size:clamp(60px,10vw,130px);font-weight:500;
+  color:var(--mist);letter-spacing:.18em;line-height:1.15;margin-bottom:22px;
+  text-shadow:0 0 60px rgba(200,160,87,.25)}
+.im-hero h1 span{background:linear-gradient(180deg,#F4E5B8,var(--gold) 55%,var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.im-hero .latin{font-style:italic;color:var(--mist-low);font-size:16px;letter-spacing:.1em;margin-bottom:34px}
+.im-hero .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:44px}
+.im-hero .chips .p-tag,.im-hero .chips .p-terrain-tag{font-size:12px;padding:5px 16px;border-radius:14px}
+.im-hero .scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  font-size:10px;letter-spacing:.45em;color:var(--mist-low);text-align:center;animation:scrollHint 2.4s ease-in-out infinite}
+.im-hero .scroll-hint::after{content:"";display:block;width:1px;height:40px;margin:10px auto 0;
+  background:linear-gradient(180deg,var(--gold),transparent)}
+@keyframes scrollHint{0%,100%{opacity:.4;transform:translate(-50%,0)}50%{opacity:1;transform:translate(-50%,6px)}}
+
+/* 数据卡 */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;margin-top:44px}
+.stat-card{padding:28px 26px;background:rgba(21,27,35,.6);border:1px solid rgba(200,160,87,.18);
+  border-radius:14px;backdrop-filter:blur(10px);transition:.4s}
+.stat-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.4)}
+.stat-card .n{font-family:"Noto Serif SC",serif;font-size:44px;font-weight:500;
+  background:linear-gradient(180deg,var(--gold-soft),var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;margin-bottom:8px;letter-spacing:.02em}
+.stat-card .l{font-size:11px;color:var(--mist-low);letter-spacing:.3em}
+
+/* 威胁/保护条目 */
+.th-list{margin-top:30px;display:flex;flex-direction:column;gap:14px}
+.th-item{display:flex;align-items:flex-start;gap:16px;padding:18px 22px;
+  background:rgba(21,27,35,.55);border:1px solid rgba(200,160,87,.14);border-radius:12px;
+  transition:.4s}
+.th-item:hover{border-color:var(--gold-soft);background:rgba(21,27,35,.8)}
+.th-item .ico{width:42px;height:42px;border-radius:50%;background:rgba(200,160,87,.08);
+  border:1px solid rgba(200,160,87,.25);display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0}
+.th-item .body h4{font-family:"Noto Serif SC",serif;font-size:16px;color:var(--mist);
+  margin-bottom:4px;font-weight:500;letter-spacing:.05em}
+.th-item .body p{font-size:13px;color:var(--mist-dim);line-height:1.8;margin:0;max-width:none}
+
+/* 栖息地 */
+.habitat-box{margin-top:30px;padding:30px;border-radius:16px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(62,124,92,.18),rgba(21,27,35,.8));
+  border:1px solid rgba(62,124,92,.35)}
+.habitat-box .terr-name{font-family:"Noto Serif SC",serif;font-size:28px;color:var(--jade-soft);
+  letter-spacing:.15em;margin-bottom:10px;font-weight:500}
+.habitat-box .terr-desc{font-size:14px;color:var(--mist-dim);line-height:2}
+
+/* 底部 CTA */
+.im-final{padding:80px 8vw 120px;text-align:center}
+.im-final h3{font-family:"Noto Serif SC",serif;font-size:36px;color:var(--mist);
+  letter-spacing:.15em;margin-bottom:14px;font-weight:500}
+.im-final .msg{font-size:14px;color:var(--mist-dim);margin-bottom:40px;letter-spacing:.15em;line-height:2}
+.im-final .ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.im-final .cta-dy{display:inline-flex;align-items:center;gap:9px;padding:14px 32px;border-radius:30px;
+  font-size:13px;font-weight:600;text-decoration:none;letter-spacing:.2em;transition:.3s;
+  background:linear-gradient(135deg,#fe2c55,#ff6b8a);color:#fff;
+  box-shadow:0 8px 24px rgba(254,44,85,.3)}
+.im-final .cta-dy:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(254,44,85,.5)}
+.im-final .cta-back{display:inline-flex;align-items:center;gap:9px;padding:14px 32px;border-radius:30px;
+  font-size:13px;font-weight:600;letter-spacing:.2em;cursor:pointer;transition:.3s;
+  background:transparent;color:var(--gold);border:1px solid rgba(200,160,87,.4)}
+.im-final .cta-back:hover{background:rgba(200,160,87,.1);border-color:var(--gold)}
+
+/* 移动端 */
+@media (max-width:720px){
+  .im-sec{padding:72px 6vw 48px}
+  .im-sec .sec-num{font-size:52px;top:38px}
+  .im-nav{left:12px;gap:10px}
+  .im-nav a::after{display:none}
+  .im-hero h1{font-size:clamp(44px,12vw,72px);letter-spacing:.1em}
+  .im-close{top:14px;right:14px;width:36px;height:36px}
+  .stat-grid{grid-template-columns:1fr 1fr;gap:12px}
+  .stat-card{padding:18px 16px}
+  .stat-card .n{font-size:30px}
+}
+
+/* ========== v14.3 移动端 BottomSheet ========== */
+@media (max-width:720px){
+  /* 面板改为底部抽屉 */
+  #panel{right:0;left:0;top:auto;bottom:0;width:100%;max-height:82vh;
+    transform:translateY(100%);opacity:1;
+    border-radius:20px 20px 0 0;
+    border:1px solid var(--panel-bd);border-bottom:0;
+    transition:transform .45s var(--ease-cine)}
+  #panel.show{transform:translateY(0);opacity:1}
+  #panel::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);
+    width:48px;height:4px;background:rgba(200,160,87,.4);border-radius:2px;z-index:6}
+  .p-close{top:16px;right:14px}
+  .p-hero{height:180px}
+  .p-body{padding:14px 18px 28px}
+  .p-deep{padding:14px 18px;font-size:12px;letter-spacing:.22em}
+  /* L3 移动端优化 */
+  #immer .im-hero h1{font-size:clamp(42px,13vw,72px)}
+  #immer .im-sec{padding:68px 5vw 44px}
+  #immer .im-sec .sec-num{font-size:48px;top:34px;right:5vw}
+  #immer .im-sec h2{font-size:28px}
+  #immer .im-sec p{font-size:14px;line-height:1.9}
+  #immer .th-item{padding:14px 16px;gap:12px}
+  #immer .th-item .ico{width:36px;height:36px;font-size:18px}
+  /* 地图控件按钮 */
+  #hdr .mark::before{height:18px;width:5px}
+  #hdr h1{font-size:15px}
+  .ctrls{gap:4px}
+  .ctrls button{padding:5px 10px;font-size:9px}
+}
+
+/* ========== v14.4 右下悬浮图鉴按钮 ========== */
+#atlas-fab{position:fixed;bottom:22px;right:22px;z-index:22;
+  width:auto;padding:10px 16px 10px 12px;border-radius:28px;
+  background:linear-gradient(135deg,rgba(200,160,87,.2),rgba(200,160,87,.06));
+  border:1px solid rgba(200,160,87,.4);
+  color:var(--gold);cursor:pointer;display:none;align-items:center;gap:9px;
+  backdrop-filter:blur(14px);transition:.35s var(--ease-cine);
+  font-size:11px;letter-spacing:.2em;
+  box-shadow:0 8px 24px rgba(0,0,0,.4),0 0 0 1px rgba(200,160,87,.15) inset;
+  opacity:0;transform:translateY(16px)}
+#atlas-fab.show{display:flex;opacity:1;transform:translateY(0)}
+#atlas-fab:hover{background:linear-gradient(135deg,rgba(200,160,87,.35),rgba(200,160,87,.1));
+  border-color:var(--gold);transform:translateY(-2px);box-shadow:0 12px 32px rgba(200,160,87,.3)}
+#atlas-fab .ic{width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--ink);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;
+  font-family:"Noto Serif SC",serif}
+#atlas-fab .n{font-family:"Noto Serif SC",serif;font-size:13px;font-weight:500;letter-spacing:.08em}
+#atlas-fab .sep{color:var(--mist-low);margin:0 2px}
+#atlas-fab .t{color:var(--mist-low)}
+@media (max-width:720px){#atlas-fab{bottom:14px;right:12px;padding:8px 12px 8px 10px;font-size:10px}#atlas-fab .n{font-size:12px}}
+
+/* ========== v14.4 解锁 Toast ========== */
+.ach-toast{position:fixed;top:92px;left:50%;transform:translate(-50%,-12px);z-index:88;
+  padding:14px 26px 14px 18px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(15,20,25,.95),rgba(21,27,35,.95));
+  border:1px solid var(--gold);box-shadow:var(--shadow-lux),0 0 28px rgba(200,160,87,.3);
+  display:flex;align-items:center;gap:14px;opacity:0;pointer-events:none;
+  transition:opacity .5s,transform .5s var(--ease-cine);max-width:92vw}
+.ach-toast.show{opacity:1;transform:translate(-50%,0)}
+.ach-toast .bg-r{width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  background:radial-gradient(circle,rgba(200,160,87,.4) 0%,transparent 70%);
+  display:flex;align-items:center;justify-content:center;animation:ringPulse 2s ease-in-out infinite}
+@keyframes ringPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,160,87,.6)}50%{box-shadow:0 0 0 10px rgba(200,160,87,0)}}
+.ach-toast .bg-r i{font-family:"Noto Serif SC",serif;font-size:22px;color:var(--gold);font-style:normal;font-weight:500}
+.ach-toast .tx{display:flex;flex-direction:column;gap:3px}
+.ach-toast .l{font-size:10px;letter-spacing:.45em;color:var(--gold)}
+.ach-toast .n{font-family:"Noto Serif SC",serif;font-size:16px;color:var(--mist);letter-spacing:.1em;font-weight:500}
+
+/* ========== v14.4 图鉴 Modal ========== */
+#atlas{position:fixed;inset:0;z-index:75;background:rgba(5,8,12,.94);
+  display:none;backdrop-filter:blur(18px);overflow-y:auto;padding:0}
+#atlas.show{display:block}
+.atlas-head{position:sticky;top:0;z-index:4;background:linear-gradient(180deg,rgba(5,8,12,.98),rgba(5,8,12,.85));
+  padding:28px 6vw 22px;border-bottom:1px solid rgba(200,160,87,.15);
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.atlas-head .tt{font-family:"Noto Serif SC",serif;font-size:30px;color:var(--gold);letter-spacing:.18em;font-weight:500}
+.atlas-head .tt::before{content:"";display:inline-block;width:6px;height:24px;
+  background:linear-gradient(180deg,var(--gold),var(--gold-deep));margin-right:14px;vertical-align:-5px;border-radius:2px}
+.atlas-head .meta{display:flex;gap:18px;color:var(--mist-dim);font-size:12px;letter-spacing:.2em;margin-left:12px}
+.atlas-head .meta b{color:var(--gold);font-family:"Noto Serif SC",serif;font-size:20px;font-weight:500;margin-right:4px;letter-spacing:.05em}
+.atlas-head .meta .bar{display:inline-block;width:120px;height:4px;background:rgba(200,160,87,.18);
+  border-radius:2px;overflow:hidden;vertical-align:middle;margin-left:6px}
+.atlas-head .meta .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-deep),var(--gold-soft));
+  border-radius:2px;transition:width .8s var(--ease-cine)}
+.atlas-head .atlas-close{margin-left:auto;width:40px;height:40px;border-radius:50%;
+  background:rgba(15,20,25,.6);border:1px solid rgba(200,160,87,.3);
+  display:flex;align-items:center;justify-content:center;color:var(--mist-dim);cursor:pointer;
+  transition:.3s;font-size:15px}
+.atlas-close:hover{color:var(--gold);border-color:var(--gold);background:rgba(200,160,87,.12);transform:rotate(90deg)}
+.atlas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px;padding:30px 6vw 80px}
+.card{position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;cursor:pointer;
+  background:linear-gradient(180deg,#1a2028,#0a0e14);
+  border:1px solid rgba(200,160,87,.2);transition:.45s var(--ease-cine)}
+.card:hover{border-color:var(--gold);transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.6),0 0 0 1px rgba(200,160,87,.4) inset}
+.card .img{position:absolute;inset:0;background-size:cover;background-position:center;transition:.6s}
+.card.locked .img{filter:grayscale(1) brightness(.18) blur(3px)}
+.card.locked::before{content:"🔒";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:34px;opacity:.55;z-index:2}
+.card .veil{position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(10,14,20,.92) 100%)}
+.card .info{position:absolute;left:14px;right:14px;bottom:12px;z-index:3}
+.card .p{font-size:9px;color:var(--gold-deep);letter-spacing:.35em;margin-bottom:4px}
+.card .n{font-family:"Noto Serif SC",serif;font-size:17px;color:var(--mist);margin-bottom:4px;
+  font-weight:500;letter-spacing:.05em;line-height:1.25}
+.card .la{font-style:italic;color:var(--mist-low);font-size:10px}
+.card .lv-pill{position:absolute;top:10px;left:10px;padding:2px 8px;border-radius:5px;font-size:9px;font-weight:700;color:#fff;letter-spacing:.1em;z-index:3}
+.card .pkg{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;
+  background:rgba(200,160,87,.15);border:1px solid var(--gold);z-index:3;
+  display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:12px;font-weight:700}
+.card.locked .lv-pill,.card.locked .pkg{display:none}
+@media (max-width:720px){
+  .atlas-head{padding:18px 4vw 14px}
+  .atlas-head .tt{font-size:22px}
+  .atlas-head .meta{font-size:10px;gap:12px;margin-left:0;flex-basis:100%}
+  .atlas-grid{grid-template-columns:repeat(2,1fr);gap:10px;padding:18px 4vw 60px}
+  .card .n{font-size:14px}
+  .card .la{display:none}
+}
+
+/* ========== v14.4 分享海报 Modal ========== */
+#share{position:fixed;inset:0;z-index:95;background:rgba(5,8,12,.9);
+  display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(12px)}
+#share.show{display:flex}
+.share-box{background:var(--ink-2);border:1px solid rgba(200,160,87,.3);
+  border-radius:16px;padding:24px;max-width:420px;width:100%;max-height:92vh;overflow-y:auto;
+  box-shadow:var(--shadow-lux);text-align:center}
+.share-box h3{font-family:"Noto Serif SC",serif;color:var(--gold);font-size:18px;
+  letter-spacing:.18em;font-weight:500;margin-bottom:14px}
+.share-box canvas{max-width:100%;border-radius:10px;display:block;margin:0 auto;
+  box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.share-box .hint{color:var(--mist-low);font-size:11px;letter-spacing:.2em;margin-top:12px;line-height:1.8}
+.share-box .act{display:flex;gap:10px;margin-top:16px}
+.share-box .btn{flex:1;padding:11px 14px;border-radius:24px;font-size:12px;letter-spacing:.15em;
+  cursor:pointer;transition:.3s;border:1px solid rgba(200,160,87,.4);background:transparent;color:var(--gold);font-weight:600}
+.share-box .btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-deep));
+  color:var(--ink);border-color:transparent}
+.share-box .btn:hover{transform:translateY(-2px)}
+
+/* ========== 数据来源小标识 ========== */
+.src-note{font-size:10px;color:var(--mist-low);letter-spacing:.2em;margin-top:18px;
+  padding-top:12px;border-top:1px solid rgba(200,160,87,.1);font-style:italic}
+.src-note b{color:var(--gold-deep);font-style:normal;font-weight:600}
 </style>
 </head>
 <body>
-<div id="loading"><div class="loader"></div><div class="ltxt">中国濒危动物 3D 地图</div><div class="lsub">正在构建地形与3D模型...</div></div>
-<div id="hdr"><h1>中国濒危动物地图</h1><span class="sub">34 省 · 100+ 濒危物种 · 3D 动物模型 · 抖音视频</span></div>
-<div class="ctrls" id="ctrls"><button id="btn-rot">自动旋转</button><button id="btn-rst">复位</button></div>
+<!-- ===== 6秒开场序幕 ===== -->
+<div id="cine">
+  <div class="bird">
+    <svg viewBox="0 0 110 70" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" stroke="#C8A057" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 40 Q25 10 42 30 Q52 38 58 36 Q68 32 76 20 Q88 8 102 18" class="wing"/>
+        <path d="M8 42 Q25 58 42 38 Q52 34 58 36 Q70 40 78 52 Q90 62 102 52" class="wing" opacity=".65"/>
+        <circle cx="55" cy="36" r="1.6" fill="#E2C27A"/>
+      </g>
+    </svg>
+  </div>
+  <div class="brand">
+    <div class="logo-line"></div>
+    <h1 class="serif"><span class="glow">万</span><span class="glow">物</span><span class="glow">共</span><span class="glow">生</span></h1>
+    <div class="tag">中国濒危动物数字志</div>
+    <div class="sub">THE LIVING ATLAS OF CHINA'S ENDANGERED SPECIES</div>
+  </div>
+  <div class="cine-foot">
+    <div class="cine-prog"><i></i></div>
+    <button class="cine-skip" id="cine-skip">跳过序幕 · SKIP</button>
+  </div>
+</div>
+
+<!-- ===== 顶部导航 ===== -->
+<div id="hdr">
+  <div class="mark">
+    <h1 class="serif">万物共生</h1>
+    <span class="sub">34 省 · 100+ 物种 · 数字生态志</span>
+  </div>
+  <nav class="nav">
+    <a id="nav-explore">探索地图</a>
+    <a id="nav-about">关于项目</a>
+  </nav>
+</div>
+
+<div class="ctrls" id="ctrls">
+  <button id="btn-rot">自动巡游</button>
+  <button id="btn-rst">视角复位</button>
+</div>
 <div id="app"></div>
+
+<!-- v14.4 右下图鉴 FAB -->
+<div id="atlas-fab"><span class="ic">册</span><span class="n" id="fab-n">0</span><span class="sep">/</span><span class="t" id="fab-t">100</span></div>
+
+<!-- v14.4 解锁 Toast -->
+<div class="ach-toast" id="ach-toast">
+  <div class="bg-r"><i>新</i></div>
+  <div class="tx"><div class="l">图鉴解锁</div><div class="n" id="ach-n">—</div></div>
+</div>
+
+<!-- v14.4 图鉴弹层 -->
+<div id="atlas">
+  <div class="atlas-head">
+    <div class="tt">物种图鉴</div>
+    <div class="meta">
+      <span><b id="atl-u">0</b>/<span id="atl-t">0</span> 解锁
+        <span class="bar"><i id="atl-b" style="width:0%"></i></span>
+      </span>
+      <span>CR <b id="atl-cr">0</b></span>
+      <span>EN <b id="atl-en">0</b></span>
+      <span>VU <b id="atl-vu">0</b></span>
+      <span>NT <b id="atl-nt">0</b></span>
+    </div>
+    <div class="atlas-close" id="atlas-close">✕</div>
+  </div>
+  <div class="atlas-grid" id="atlas-grid"></div>
+</div>
+
+<!-- v14.4 分享海报 Modal -->
+<div id="share">
+  <div class="share-box">
+    <h3>我的守护图鉴</h3>
+    <canvas id="share-canvas" width="720" height="1280"></canvas>
+    <div class="hint">长按图片保存 · 分享给朋友<br>一起守护中国的濒危动物</div>
+    <div class="act">
+      <button class="btn" id="share-dl">下载海报</button>
+      <button class="btn primary" id="share-close">关闭</button>
+    </div>
+  </div>
+</div>
+
 <div id="tooltip"></div>
 <div id="legend"><h4>濒危等级</h4>
 <div><span class="sw" style="background:#ef4444"></span>CR 极危</div>
@@ -79,7 +621,17 @@ html,body{width:100%;height:100%;background:#020a14;color:#fff;font-family:"Ping
 <div class="p-desc" id="p-desc"></div>
 <div class="p-video" id="p-video"></div>
 <div class="p-count" id="p-count"></div>
+<div class="p-deep" id="p-deep"><span>深入了解</span><span class="arr">→</span></div>
 </div></div>
+
+<!-- ===== L3 Immersive 长页 ===== -->
+<div id="immer">
+  <div class="im-prog" id="im-prog"></div>
+  <div class="im-close" id="im-close">✕</div>
+  <nav class="im-nav" id="im-nav"></nav>
+  <div id="im-content"></div>
+</div>
+
 
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
@@ -92,6 +644,33 @@ import{EffectComposer}from'three/addons/postprocessing/EffectComposer.js';
 import{RenderPass}from'three/addons/postprocessing/RenderPass.js';
 import{UnrealBloomPass}from'three/addons/postprocessing/UnrealBloomPass.js';
 import{OutputPass}from'three/addons/postprocessing/OutputPass.js';
+
+
+/* ===== 开场序幕控制 ===== */
+const cine=document.getElementById('cine');
+const app=document.getElementById('app');
+const hdrEl=document.getElementById('hdr');
+const ctrlsEl=document.getElementById('ctrls');
+const legendEl=document.getElementById('legend');
+let cineFinished=false;
+function endCine(){
+  if(cineFinished)return;cineFinished=true;
+  cine.classList.add('fadeout');
+  app.classList.add('reveal');
+  hdrEl.classList.add('reveal');
+  ctrlsEl.classList.add('reveal');
+  legendEl.classList.add('reveal');
+  setTimeout(()=>{cine.style.display='none'},1500);
+}
+/* 默认 4.8s 后自动退场;数据加载完也会调用 endCine */
+setTimeout(endCine,4800);
+document.getElementById('cine-skip').addEventListener('click',endCine);
+document.getElementById('nav-explore').addEventListener('click',()=>{
+  document.getElementById('btn-rst').click();
+});
+document.getElementById('nav-about').addEventListener('click',()=>{
+  alert('《万物共生》\n\n中国濒危动物数字生态志\n以 3D 交互地图呈现 34 省 100+ 濒危物种\n用科技守护生命\n\n数据来源:IUCN 红色名录 / 国家重点保护野生动物名录');
+});
 
 /* ===== 阻止面板事件穿透到地图 ===== */
 let panelHover=false;
@@ -150,6 +729,59 @@ const P={
 "香港特别行政区":{animals:[{n:"中华白海豚",la:"Sousa chinensis",lv:"VU",c:"fish",img:IMG.ht,d:"大屿山以北为栖息地。"},{n:"黑脸琵鹭",la:"Platalea minor",lv:"EN",c:"bird",img:null,d:"后海湾全球第三大越冬地。"}]},
 "澳门特别行政区":{animals:[{n:"中华白海豚",la:"Sousa chinensis",lv:"VU",c:"fish",img:IMG.ht,d:"珠江口偶有记录。"},{n:"黑脸琵鹭",la:"Platalea minor",lv:"EN",c:"bird",img:null,d:"路氹湿地有越冬记录。"}]}
 };
+
+
+/* ===== v14.5 物种扩展包 ===== */
+const EXTRA={
+  "北京市":[{n:"中华斑羚",la:"Naemorhedus griseus",lv:"VU",c:"ungulate",img:null,d:"华北山地岩壁间攀援的中型偶蹄类,密云雾灵山有分布。"}],
+  "河北省":[{n:"黑鹳",la:"Ciconia nigra",lv:"VU",c:"bird",img:null,d:"拒马河和野三坡为重要栖息地,中国北方稀有涉禽。"}],
+  "吉林省":[{n:"紫貂",la:"Martes zibellina",lv:"VU",c:"mammal",img:null,d:"长白山原始针叶林中夜行猎手,皮毛为其带来长期威胁。"}],
+  "黑龙江省":[{n:"紫貂",la:"Martes zibellina",lv:"VU",c:"mammal",img:null,d:"大小兴安岭是最主要栖息区,国家一级保护动物。"},
+             {n:"白尾海雕",la:"Haliaeetus albicilla",lv:"VU",c:"bird",img:null,d:"欧亚大陆最大猛禽之一,三江平原为越冬地。"}],
+  "内蒙古自治区":[{n:"蒙原羚",la:"Procapra gutturosa",lv:"EN",c:"ungulate",img:null,d:"曾覆盖广袤草原的迁徙动物,中蒙边境仅存零星种群。"},
+                {n:"草原雕",la:"Aquila nipalensis",lv:"EN",c:"bird",img:null,d:"大型猛禽,依赖健康鼠兔种群维持生存。"}],
+  "辽宁省":[{n:"黑脸琵鹭",la:"Platalea minor",lv:"EN",c:"bird",img:null,d:"辽东湾是其繁殖地,全球不足7000只。"}],
+  "上海市":[{n:"黄胸鹀",la:"Emberiza aureola",lv:"CR",c:"bird",img:null,d:"曾遍布东亚的小型鸣禽,被捕猎食致种群崩溃。"}],
+  "江苏省":[{n:"长江江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:null,d:"南京长江段仍有稳定种群,被誉为'长江微笑'。"}],
+  "浙江省":[{n:"黄腹角雉",la:"Tragopan caboti",lv:"VU",c:"bird",img:null,d:"乌岩岭是其核心保护区,中国特有美丽雉类。"},
+           {n:"江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:null,d:"舟山海域仍有少量海洋亚种出没。"}],
+  "安徽省":[{n:"长江江豚",la:"Neophocaena asiaeorientalis",lv:"CR",c:"fish",img:null,d:"安庆至铜陵江段是稳定栖息区。"}],
+  "福建省":[{n:"勺嘴鹬",la:"Calidris pygmaea",lv:"CR",c:"bird",img:null,d:"福建闽江口湿地是重要迁徙停歇地。"}],
+  "江西省":[{n:"中华秋沙鸭",la:"Mergus squamatus",lv:"EN",c:"bird",img:null,d:"婺源冬季可观察到野生种群越冬。"}],
+  "山东省":[{n:"斑海豹",la:"Phoca largha",lv:"NT",c:"mammal",img:null,d:"庙岛群岛是黄渤海种群的核心繁殖区。"}],
+  "河南省":[{n:"中华秋沙鸭",la:"Mergus squamatus",lv:"EN",c:"bird",img:null,d:"河南黄河湿地有越冬记录,国家一级保护动物。"}],
+  "湖北省":[{n:"神农架金丝猴",la:"Rhinopithecus roxellana hubeiensis",lv:"EN",c:"primate",img:null,d:"神农架特有亚种,种群约1400只。"}],
+  "湖南省":[{n:"白颈长尾雉",la:"Syrmaticus ellioti",lv:"VU",c:"bird",img:null,d:"华南山林稀有雉类,中国特有。"}],
+  "广东省":[{n:"鳄蜥",la:"Shinisaurus crocodilurus",lv:"EN",c:"reptile",img:null,d:"罗坑保护区是其重要栖息地。"}],
+  "广西壮族自治区":[{n:"东黑冠长臂猿",la:"Nomascus nasutus",lv:"CR",c:"primate",img:null,d:"中越边境靖西邦亮,全球不足150只。"},
+                   {n:"白眉长臂猿",la:"Hoolock leuconedys",lv:"VU",c:"primate",img:null,d:"桂西南喀斯特地貌中的边缘分布点。"}],
+  "海南省":[{n:"海南巨松鼠",la:"Ratufa bicolor hainana",lv:"VU",c:"mammal",img:null,d:"海南特有亚种,热带雨林树冠活动。"},
+           {n:"圆鼻巨蜥",la:"Varanus salvator",lv:"VU",c:"reptile",img:null,d:"中国体型最大的蜥蜴,海南水系有野生分布。"}],
+  "重庆市":[{n:"林麝",la:"Moschus berezovskii",lv:"EN",c:"ungulate",img:null,d:"南川金佛山仍有野生分布,麝香贸易是主要威胁。"}],
+  "四川省":[{n:"扭角羚",la:"Budorcas taxicolor",lv:"VU",c:"ungulate",img:null,d:"高山竹林偶蹄目,与大熊猫共享栖息地。"},
+           {n:"林麝",la:"Moschus berezovskii",lv:"EN",c:"ungulate",img:null,d:"川西高山林区野外种群持续下降。"},
+           {n:"绿尾虹雉",la:"Lophophorus lhuysii",lv:"VU",c:"bird",img:null,d:"仅产于中国,虹彩羽毛的高山雉类。"}],
+  "贵州省":[{n:"白冠长尾雉",la:"Syrmaticus reevesii",lv:"VU",c:"bird",img:null,d:"羽尾可达1.5米,中国特有鸟类。"}],
+  "云南省":[{n:"印支虎",la:"Panthera tigris corbetti",lv:"EN",c:"mammal",img:null,d:"西双版纳边境为中国最后少数分布点。"},
+           {n:"黑冠长臂猿",la:"Nomascus concolor",lv:"CR",c:"primate",img:null,d:"无量山和哀牢山是稳定种群核心区。"},
+           {n:"蜂猴",la:"Nycticebus bengalensis",lv:"VU",c:"primate",img:null,d:"夜行灵长类,非法宠物贸易压力巨大。"}],
+  "西藏自治区":[{n:"马来熊",la:"Helarctos malayanus",lv:"VU",c:"mammal",img:null,d:"西藏墨脱为其在中国的边缘分布地。"},
+               {n:"黑颈鹤",la:"Grus nigricollis",lv:"NT",c:"bird",img:null,d:"世界唯一高原繁殖鹤类,雅江河谷越冬。"}],
+  "陕西省":[{n:"林麝",la:"Moschus berezovskii",lv:"EN",c:"ungulate",img:null,d:"秦岭是重要分布区,人工养殖基地较多。"}],
+  "甘肃省":[{n:"普氏原羚",la:"Procapra przewalskii",lv:"EN",c:"ungulate",img:null,d:"甘肃北部与青海交界的零星分布点。"}],
+  "青海省":[{n:"黑颈鹤",la:"Grus nigricollis",lv:"NT",c:"bird",img:null,d:"隆宝滩是主要繁殖地,种群约7000只。"}],
+  "新疆维吾尔自治区":[{n:"塔里木兔",la:"Lepus yarkandensis",lv:"EN",c:"mammal",img:null,d:"塔克拉玛干沙漠北缘特有兔类。"},
+                     {n:"北山羊",la:"Capra sibirica",lv:"NT",c:"ungulate",img:null,d:"天山和昆仑山高海拔岩壁攀爬者。"}],
+  "台湾省":[{n:"帝雉",la:"Syrmaticus mikado",lv:"NT",c:"bird",img:null,d:"台湾特有高山雉类,印在千元新台币上。"}]
+};
+/* 合并进 P */
+Object.keys(EXTRA).forEach(prov=>{
+  if(!P[prov])P[prov]={animals:[]};
+  const existing=new Set(P[prov].animals.map(a=>a.n));
+  EXTRA[prov].forEach(a=>{if(!existing.has(a.n))P[prov].animals.push(a)});
+});
+/* 数据来源标注 */
+const DATA_SOURCES='IUCN 红色名录 (2024) · 国家重点保护野生动物名录 (2021 修订) · 中国生物物种名录';
 
 const LS={CR:{color:0xef4444,emi:0x8a1a1a,h:5,t:"极危"},EN:{color:0xf97316,emi:0x703010,h:3.8,t:"濒危"},VU:{color:0xeab308,emi:0x5a4008,h:2.6,t:"易危"},NT:{color:0x06b6d4,emi:0x0a4858,h:1.6,t:"近危"}};
 const LV_BG={CR:'#7f1d1d',EN:'#7c2d12',VU:'#713f12',NT:'#164e63'};
@@ -350,10 +982,10 @@ document.getElementById('btn-rst').onclick=()=>{const sC=cam.position.clone(),sT
 fetch("./china_geo.json")
 .then(r=>r.json()).then(async geo=>{
   await buildMap(geo);
-  document.getElementById('loading').style.display='none';
-  document.getElementById('legend').style.display='block';
-  document.getElementById('ctrls').style.display='flex';
-}).catch(e=>{document.getElementById('loading').innerHTML='<div style="color:#ef4444">加载失败：'+e.message+'</div>'});
+  endCine();
+  // legend reveal 由 endCine 控制
+  // ctrls reveal 由 endCine 控制
+}).catch(e=>{document.getElementById('cine').innerHTML='<div style="color:#D47A3A;font-size:13px;letter-spacing:.2em">数据加载失败 · '+e.message+'</div>'});
 
 /* Render */
 const clock=new THREE.Clock();
@@ -375,7 +1007,7 @@ function anim(){
         if(Array.isArray(o.material))o.material.forEach(m=>m.emissiveIntensity=.5);else o.material.emissiveIntensity=.5;
         const a=o.userData.animal,tn=TC[o.userData.terrain],pd=P[o.userData.name];const cnt=pd?pd.animals.length:0;
         tip.style.display='block';
-        tip.innerHTML=a?`<b style="color:#ffd770">${o.userData.name}</b> · ${a.n}${cnt>1?' 等'+cnt+'种':''}<br><span style="color:#6a9abc;font-size:10px">${tn?tn.name:''} · 点击查看</span>`:`<b>${o.userData.name}</b>`;
+        tip.innerHTML=buildTipCard(o.userData.name,pd,tn);
         document.body.style.cursor='pointer';
       }
     }else{resetHov();tip.style.display='none';document.body.style.cursor='default'}
@@ -385,6 +1017,471 @@ function anim(){
 function resetHov(){if(hov){const ei=hov.userData.baseEI||.12;if(Array.isArray(hov.material))hov.material.forEach(m=>m.emissiveIntensity=ei);else hov.material.emissiveIntensity=ei;hov=null}}
 anim();
 addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();ren.setSize(innerWidth,innerHeight);comp.setSize(innerWidth,innerHeight)});
+/* ===== L1 Hover 浮层卡构建器 ===== */
+function buildTipCard(provName,pd,tn){
+  if(!pd){return `<div class="tip-head"><div class="tip-prov">${provName}</div></div><div class="tip-cta" style="border-top:0">暂无录入</div>`}
+  const an=pd.animals;const cnt=an.length;
+  const lvCount={CR:0,EN:0,VU:0,NT:0};an.forEach(x=>lvCount[x.lv]=(lvCount[x.lv]||0)+1);
+  // 最高危等级决定环颜色
+  const rankOrder=['CR','EN','VU','NT'];let topLv='NT';for(const lv of rankOrder){if(lvCount[lv]>0){topLv=lv;break}}
+  const color=({CR:'#C0392B',EN:'#D47A3A',VU:'#B9923B',NT:'#3F7A89'})[topLv];
+  const R=15,C=2*Math.PI*R;const pct=Math.min(1,cnt/5);const dash=C*pct;
+  let rowHtml='';
+  an.slice(0,3).forEach(a=>{
+    const c=({CR:'#C0392B',EN:'#D47A3A',VU:'#B9923B',NT:'#3F7A89'})[a.lv];
+    rowHtml+=`<div class="tip-row"><span class="dot" style="background:${c}"></span><b>${a.n}</b><span class="lv-chip" style="background:${c}">${a.lv}</span></div>`;
+  });
+  if(cnt>3)rowHtml+=`<div class="tip-row" style="color:var(--mist-low);font-size:10px;letter-spacing:.2em">还有 ${cnt-3} 种 ...</div>`;
+  return `<div class="tip-card">
+    <div class="tip-head">
+      <div class="tip-prov">${provName}</div>
+      <div class="tip-ring">
+        <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="${R}" fill="none" stroke="rgba(200,160,87,.12)" stroke-width="2.5"/>
+        <circle cx="20" cy="20" r="${R}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="${dash} ${C}"/></svg>
+        <div class="t-num">${cnt}</div>
+      </div>
+    </div>
+    <div class="tip-body">${rowHtml}</div>
+    <div class="tip-cta">${tn?tn.name+' · ':''}点击查看详情</div>
+  </div>`;
+}
+
+/* ===== L3 Immersive 沉浸长页 ===== */
+const IM_SECS=[
+  {k:'hero',l:'序章'},
+  {k:'ident',l:'形态识别'},
+  {k:'habitat',l:'栖息地'},
+  {k:'status',l:'生存现状'},
+  {k:'threats',l:'主要威胁'},
+  {k:'conserve',l:'保护行动'},
+];
+
+/* 通用威胁/保护条目（可根据类别微调） */
+const THREATS_BY_CAT={
+  mammal:[{i:'🌲',t:'栖息地丧失',d:'森林砍伐、道路切割和城市扩张使核心栖息地破碎化。'},
+          {i:'🎯',t:'盗猎与非法贸易',d:'皮毛、骨骼和器官的黑市需求仍是首要威胁。'},
+          {i:'🥀',t:'食物链断裂',d:'下层物种减少导致顶级捕食者难以维系种群规模。'}],
+  bird:  [{i:'🌾',t:'湿地退化',d:'农业围垦、污染与水位调节改变了关键停歇与繁殖地。'},
+          {i:'⚡',t:'迁徙路线风险',d:'电线碰撞、风电场与光污染干扰数千公里的长距迁徙。'},
+          {i:'🏹',t:'非法猎捕',d:'迁徙中转站仍有违法张网与毒饵投放事件。'}],
+  ungulate:[{i:'🌵',t:'草场退化',d:'过度放牧与气候变暖导致高寒草地承载力下降。'},
+           {i:'🚧',t:'围栏与道路',d:'牧业围栏和公路铁路阻断了传统迁徙路线。'},
+           {i:'🐺',t:'家畜竞争',d:'与家畜争夺水源和牧草，传染病风险上升。'}],
+  primate:[{i:'🌳',t:'森林片段化',d:'热带与亚热带林的孤岛化使种群基因交流受阻。'},
+           {i:'🏘️',t:'人兽冲突',d:'侵入农田与村庄，易被驱赶、伤害或捕获。'},
+           {i:'🦠',t:'疾病传播',d:'与家畜和人类接触增加了传染病跨物种传播风险。'}],
+  fish:  [{i:'🏭',t:'水体污染',d:'工业排放与农药径流使敏感水生动物无法繁衍。'},
+          {i:'🪝',t:'过度捕捞',d:'误捕、电鱼与拦河网阻断产卵洄游路径。'},
+          {i:'🏗️',t:'水利工程',d:'大坝和水闸切断了洄游型物种的生命通道。'}],
+  reptile:[{i:'💧',t:'湿地萎缩',d:'水塘、河汊与沼泽的消失直接摧毁栖息地。'},
+           {i:'🔪',t:'非法猎杀',d:'传统药材与宠物贸易使野外种群恢复困难。'},
+           {i:'🌡️',t:'气候变暖',d:'温度依赖性性别决定机制被打乱，种群性比失衡。'}],
+};
+const CONSERVE_GENERIC=[
+  {i:'🛡️',t:'国家一级保护',d:'纳入《国家重点保护野生动物名录》，法律层面严格禁止猎捕交易。'},
+  {i:'🌏',t:'自然保护区网络',d:'划定核心保护区、缓冲区和过渡区，形成栖息地安全网络。'},
+  {i:'🧬',t:'迁地保护与繁育',d:'人工繁育基地建立遗传备份，成功个体逐步野放回归自然。'},
+  {i:'📡',t:'科研监测与公众参与',d:'红外相机、卫星追踪与公民科学项目提供长期动态数据。'}
+];
+
+function buildImmersive(animal,provName,terrainKey){
+  const a=animal;const s=LS[a.lv];const tn=TC[terrainKey];
+  const threats=THREATS_BY_CAT[a.c]||THREATS_BY_CAT.mammal;
+  const heroBg=a.img?`style="background-image:url('${a.img}')"`:'';
+  const nameChars=[...a.n].map(c=>`<span>${c}</span>`).join('');
+  const dyKey=encodeURIComponent(a.n+' 濒危动物');
+  const dyUrl='https://www.douyin.com/search/'+dyKey+'?type=video';
+
+  /* Identification 兜底文案 */
+  const identText=a.d||`${a.n}是${provName}地区的标志性濒危物种之一，其独特的形态与行为特征在中国生物多样性中具有不可替代的意义。`;
+
+  /* 栖息地文案 */
+  const habitatText=tn?`${a.n}主要栖息于${tn.name}生态系统中。这里的${({草原:'辽阔草场与季节性水源',沙漠戈壁:'极端温差与稀疏植被',高原雪山:'高海拔与低温环境',热带雨林:'茂密植被与高湿度',农田水乡:'湿地、河网与季节性洪泛',寒温带森林:'针阔混交林与漫长冬季',山地森林:'垂直带谱与隐蔽林下空间',海域:'海岸与近海浅水带'})[tn.name]||'独特气候条件'}为它提供了赖以生存的资源基础。栖息地的完整度直接决定了种群的存续命运。`:'';
+
+  /* 统计数据（示例推断） */
+  const statusNum={CR:'<100',EN:'<1000',VU:'<5000',NT:'>10000'}[a.lv]||'未知';
+  const trendLabel={CR:'极危下降',EN:'濒危下降',VU:'易危波动',NT:'近危稳定'}[a.lv];
+
+  return `
+  <!-- HERO -->
+  <section class="im-hero" id="sec-hero">
+    <div class="bg" ${heroBg}></div>
+    <div class="inner">
+      <div class="prov">${provName} · ${tn?tn.name:''}</div>
+      <h1><span>${a.n}</span></h1>
+      <div class="latin">${a.la}</div>
+      <div class="chips">
+        <span class="p-tag ${a.lv}">${a.lv} · ${s.t}</span>
+        ${tn?`<span class="p-terrain-tag">${tn.name}</span>`:''}
+      </div>
+    </div>
+    <div class="scroll-hint">滚 动 探 索<br>SCROLL</div>
+  </section>
+
+  <!-- IDENTIFICATION -->
+  <section class="im-sec" id="sec-ident">
+    <div class="sec-num">01</div>
+    <div class="sec-label">FIELD NOTES</div>
+    <h2>形态识别</h2>
+    <div class="sub">Morphology & Identification</div>
+    <p>${identText}</p>
+  </section>
+
+  <!-- HABITAT -->
+  <section class="im-sec" id="sec-habitat">
+    <div class="sec-num">02</div>
+    <div class="sec-label">HABITAT</div>
+    <h2>栖息地</h2>
+    <div class="sub">Where it lives · ${tn?tn.name:'自然生境'}</div>
+    ${habitatText?`<p>${habitatText}</p>`:''}
+    <div class="habitat-box">
+      <div class="terr-name">${tn?tn.name:'—'}</div>
+      <div class="terr-desc">该物种的核心分布区位于 <b style="color:var(--gold-soft)">${provName}</b>，与当地的气候、植被和水文条件深度耦合。任何对栖息地的扰动——无论是土地利用变化、资源开采还是气候波动——都会在种群数量上留下清晰的回响。</div>
+    </div>
+  </section>
+
+  <!-- STATUS -->
+  <section class="im-sec" id="sec-status">
+    <div class="sec-num">03</div>
+    <div class="sec-label">STATUS</div>
+    <h2>生存现状</h2>
+    <div class="sub">Population & Trend</div>
+    <p>根据 IUCN 红色名录及国家相关监测数据，${a.n}目前被评定为 <b style="color:var(--gold)">${a.lv} · ${s.t}</b>等级。其种群动态是判断生态系统健康的重要指标。</p>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="n">${a.lv}</div><div class="l">濒危等级</div></div>
+      <div class="stat-card"><div class="n">${statusNum}</div><div class="l">估算野外数量</div></div>
+      <div class="stat-card"><div class="n">${trendLabel}</div><div class="l">种群趋势</div></div>
+      <div class="stat-card"><div class="n">${provName}</div><div class="l">核心分布省份</div></div>
+    </div>
+  </section>
+
+  <!-- THREATS -->
+  <section class="im-sec" id="sec-threats">
+    <div class="sec-num">04</div>
+    <div class="sec-label">THREATS</div>
+    <h2>主要威胁</h2>
+    <div class="sub">What drives them to the edge</div>
+    <div class="th-list">
+      ${threats.map(t=>`<div class="th-item"><div class="ico">${t.i}</div><div class="body"><h4>${t.t}</h4><p>${t.d}</p></div></div>`).join('')}
+    </div>
+  </section>
+
+  <!-- CONSERVATION -->
+  <section class="im-sec" id="sec-conserve">
+    <div class="sec-num">05</div>
+    <div class="sec-label">CONSERVATION</div>
+    <h2>保护行动</h2>
+    <div class="sub">What we are doing</div>
+    <div class="th-list">
+      ${CONSERVE_GENERIC.map(t=>`<div class="th-item"><div class="ico">${t.i}</div><div class="body"><h4>${t.t}</h4><p>${t.d}</p></div></div>`).join('')}
+    </div>
+  </section>
+
+  <section class="im-final">
+    <h3>每一次看见 · 都是一次守护</h3>
+    <div class="msg">在抖音观看 ${a.n} 的真实影像，把这份守望传递给下一个人。</div>
+    <div class="ctas">
+      <a class="cta-dy" href="${dyUrl}" target="_blank" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 48 48" fill="none"><path d="M21.4 4h6.2c-.2 5.4 3.4 10.4 9.4 11.2v6.6c-3.4.2-6.4-1-9-2.8v12.8c0 10-10.8 15.2-18.2 9.4-4.8-3.8-6.4-11.2-2.8-16.8 3.8-5.8 12-7 16.4-3.4v7c-1-.6-2.2-.8-3.2-.8-2.8.2-5 2.6-4.6 5.6.4 3.2 3.6 5 6.6 4 2.4-.8 4-3.2 4-5.8V4h-4.8z" fill="#fff"/></svg>
+        在抖音观看${a.n}
+      </a>
+      <div class="cta-back" id="im-back">← 返回地图</div>
+    </div>
+  </section>`;
+}
+
+function openImmersive(animal,provName,terrainKey){
+  const im=document.getElementById('immer');
+  const content=document.getElementById('im-content');
+  content.innerHTML=buildImmersive(animal,provName,terrainKey);
+  /* nav */
+  const nav=document.getElementById('im-nav');
+  nav.innerHTML=IM_SECS.map((s,i)=>`<a data-l="${s.l}" data-i="${i}" data-k="${s.k}"></a>`).join('');
+  nav.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click',()=>{
+      const t=document.getElementById('sec-'+a.dataset.k.replace('hero','hero'));
+      if(t)im.scrollTo({top:t.offsetTop-20,behavior:'smooth'});
+    });
+  });
+  document.getElementById('im-back').addEventListener('click',closeImmersive);
+  im.scrollTop=0;
+  im.classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>nav.classList.add('show'),300);
+}
+function closeImmersive(){
+  const im=document.getElementById('immer');
+  im.classList.remove('open');
+  document.getElementById('im-nav').classList.remove('show');
+  document.body.style.overflow='';
+}
+document.getElementById('im-close').addEventListener('click',closeImmersive);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeImmersive()});
+
+/* 滚动进度 + nav active */
+const imEl=document.getElementById('immer');
+imEl.addEventListener('scroll',()=>{
+  const sh=imEl.scrollHeight-imEl.clientHeight;
+  const pct=sh>0?(imEl.scrollTop/sh)*100:0;
+  document.getElementById('im-prog').style.width=pct+'%';
+  /* active 节点 */
+  const dots=document.querySelectorAll('#im-nav a');
+  let activeIdx=0;
+  IM_SECS.forEach((s,i)=>{
+    const el=document.getElementById('sec-'+s.k);
+    if(el&&el.offsetTop<=imEl.scrollTop+imEl.clientHeight*.35)activeIdx=i;
+  });
+  dots.forEach((d,i)=>d.classList.toggle('active',i===activeIdx));
+});
+
+/* L2 → L3 入口 */
+document.getElementById('p-deep').addEventListener('pointerdown',e=>{
+  e.stopPropagation();e.preventDefault();
+  const a=curAnimals[curIdx];if(!a)return;
+  openImmersive(a,curProv,curTerrain);
+});
+/* ================== v14.4 图鉴 & 解锁 & 海报 ================== */
+const LS_KEY='wwgs_unlocked_v1';
+function getUnlocked(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'[]')}catch(e){return[]}}
+function setUnlocked(a){try{localStorage.setItem(LS_KEY,JSON.stringify(a))}catch(e){}}
+let unlockedSet=new Set(getUnlocked());
+
+/* 全物种列表(去重) */
+let ALL_SPECIES=[];
+(function(){
+  const seen=new Set();
+  Object.keys(P).forEach(prov=>{
+    (P[prov].animals||[]).forEach(a=>{
+      const key=a.n;
+      if(!seen.has(key)){seen.add(key);ALL_SPECIES.push({...a,prov})}
+    });
+  });
+})();
+
+function updateFab(){
+  const u=unlockedSet.size,t=ALL_SPECIES.length;
+  document.getElementById('fab-n').innerText=u;
+  document.getElementById('fab-t').innerText=t;
+  const fab=document.getElementById('atlas-fab');
+  fab.classList.add('show');
+}
+
+function unlockSpecies(name){
+  if(unlockedSet.has(name))return false;
+  unlockedSet.add(name);setUnlocked([...unlockedSet]);
+  updateFab();showAchToast(name);return true;
+}
+
+function showAchToast(name){
+  const t=document.getElementById('ach-toast');
+  document.getElementById('ach-n').innerText=name;
+  t.classList.add('show');
+  clearTimeout(showAchToast._t);
+  showAchToast._t=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+/* 图鉴 */
+function renderAtlas(){
+  const u=unlockedSet.size,t=ALL_SPECIES.length;
+  document.getElementById('atl-u').innerText=u;
+  document.getElementById('atl-t').innerText=t;
+  document.getElementById('atl-b').style.width=(t?u/t*100:0)+'%';
+  const cnt={CR:0,EN:0,VU:0,NT:0};
+  ALL_SPECIES.forEach(s=>{if(unlockedSet.has(s.n))cnt[s.lv]=(cnt[s.lv]||0)+1});
+  document.getElementById('atl-cr').innerText=cnt.CR;
+  document.getElementById('atl-en').innerText=cnt.EN;
+  document.getElementById('atl-vu').innerText=cnt.VU;
+  document.getElementById('atl-nt').innerText=cnt.NT;
+
+  const grid=document.getElementById('atlas-grid');grid.innerHTML='';
+  /* 排序: 已解锁 → 未解锁,各自按 CR>EN>VU>NT */
+  const ord={CR:0,EN:1,VU:2,NT:3};
+  const sorted=[...ALL_SPECIES].sort((a,b)=>{
+    const ua=unlockedSet.has(a.n)?0:1,ub=unlockedSet.has(b.n)?0:1;
+    if(ua!==ub)return ua-ub;
+    return (ord[a.lv]??9)-(ord[b.lv]??9);
+  });
+  sorted.forEach(s=>{
+    const locked=!unlockedSet.has(s.n);
+    const bg=s.img?`background-image:url('${s.img}')`:'background:linear-gradient(135deg,#2a3440,#151b23)';
+    const lvColor=({CR:'#C0392B',EN:'#D47A3A',VU:'#B9923B',NT:'#3F7A89'})[s.lv];
+    const el=document.createElement('div');
+    el.className='card'+(locked?' locked':'');
+    el.innerHTML=`<div class="img" style="${bg}"></div><div class="veil"></div>
+      <div class="lv-pill" style="background:${lvColor}">${s.lv}</div>
+      <div class="pkg" title="分享">★</div>
+      <div class="info">
+        <div class="p">${s.prov}</div>
+        <div class="n">${locked?'? ? ?':s.n}</div>
+        <div class="la">${locked?'— locked —':s.la}</div>
+      </div>`;
+    el.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      if(locked){showAchToast('探索地图解锁该物种');return}
+      const pkg=el.querySelector('.pkg');
+      if(ev.target===pkg){openShare(s);return}
+      /* 直接打开沉浸长页 */
+      closeAtlas();
+      openImmersive(s,s.prov,TM[s.prov]||'farmland');
+    });
+    grid.appendChild(el);
+  });
+}
+function openAtlas(){renderAtlas();document.getElementById('atlas').classList.add('show');document.body.style.overflow='hidden'}
+function closeAtlas(){document.getElementById('atlas').classList.remove('show');document.body.style.overflow=''}
+document.getElementById('atlas-fab').addEventListener('click',openAtlas);
+document.getElementById('atlas-close').addEventListener('click',closeAtlas);
+
+/* 海报生成 */
+function openShare(species){
+  const cvs=document.getElementById('share-canvas');const ctx=cvs.getContext('2d');
+  const W=720,H=1280;cvs.width=W;cvs.height=H;
+  /* 背景 */
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#1a2028');g.addColorStop(.5,'#0f1419');g.addColorStop(1,'#05080c');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  /* 金色装饰线 */
+  const gg=ctx.createLinearGradient(0,0,W,0);
+  gg.addColorStop(0,'rgba(200,160,87,0)');gg.addColorStop(.5,'#C8A057');gg.addColorStop(1,'rgba(200,160,87,0)');
+  ctx.fillStyle=gg;ctx.fillRect(60,120,W-120,1.5);ctx.fillRect(60,H-180,W-120,1.5);
+  /* 顶部品牌 */
+  ctx.fillStyle='#C8A057';ctx.font='600 18px "Noto Serif SC", serif';ctx.textAlign='center';
+  ctx.fillText('万 物 共 生',W/2,80);
+  ctx.fillStyle='#6E6A5E';ctx.font='300 12px sans-serif';
+  ctx.fillText('THE LIVING ATLAS OF CHINA\'S ENDANGERED SPECIES',W/2,104);
+
+  const doDraw=(imgReady)=>{
+    /* 图片/占位 */
+    if(imgReady){
+      try{ctx.drawImage(imgReady,60,160,W-120,540)}catch(e){drawPH()}
+    }else{drawPH()}
+    function drawPH(){
+      ctx.fillStyle='#1a2028';ctx.fillRect(60,160,W-120,540);
+      ctx.fillStyle='#3d4a5a';ctx.font='300 14px sans-serif';ctx.textAlign='center';
+      ctx.fillText('— 守护 · 无图 —',W/2,430);
+    }
+    /* 遮罩渐变 */
+    const gi=ctx.createLinearGradient(0,400,0,700);
+    gi.addColorStop(0,'rgba(15,20,25,0)');gi.addColorStop(1,'rgba(15,20,25,.95)');
+    ctx.fillStyle=gi;ctx.fillRect(60,400,W-120,300);
+
+    /* 等级标签 */
+    const lvColor=({CR:'#C0392B',EN:'#D47A3A',VU:'#B9923B',NT:'#3F7A89'})[species.lv];
+    const lvT=({CR:'极危',EN:'濒危',VU:'易危',NT:'近危'})[species.lv]||'';
+    ctx.fillStyle=lvColor;
+    roundRect(ctx,80,180,86,30,6);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='700 14px sans-serif';ctx.textAlign='center';
+    ctx.fillText(species.lv+' · '+lvT,123,200);
+
+    /* 物种名 */
+    ctx.textAlign='center';
+    ctx.fillStyle='#E7E2D6';ctx.font='500 64px "Noto Serif SC", serif';
+    ctx.fillText(species.n,W/2,790);
+    /* 拉丁名 */
+    ctx.fillStyle='#B8B1A0';ctx.font='italic 18px serif';
+    ctx.fillText(species.la,W/2,824);
+    /* 省份 */
+    ctx.fillStyle='#C8A057';ctx.font='500 14px sans-serif';
+    ctx.fillText('— 发现于 '+species.prov+' —',W/2,862);
+    /* 描述 */
+    ctx.fillStyle='#B8B1A0';ctx.font='400 17px "Noto Serif SC",serif';ctx.textAlign='center';
+    wrapText(ctx,species.d||'',W/2,920,W-180,28);
+
+    /* 图鉴进度 */
+    const u=unlockedSet.size,t=ALL_SPECIES.length,pct=t?u/t:0;
+    ctx.fillStyle='#6E6A5E';ctx.font='400 13px sans-serif';ctx.textAlign='left';
+    ctx.fillText('我的图鉴  '+u+' / '+t,90,H-120);
+    ctx.fillStyle='rgba(200,160,87,.2)';roundRect(ctx,90,H-110,W-180,6,3);ctx.fill();
+    ctx.fillStyle='#C8A057';roundRect(ctx,90,H-110,(W-180)*pct,6,3);ctx.fill();
+
+    /* 底部 */
+    ctx.fillStyle='#C8A057';ctx.font='500 14px "Noto Serif SC",serif';ctx.textAlign='center';
+    ctx.fillText('每一次看见 · 都是一次守护',W/2,H-70);
+    ctx.fillStyle='#6E6A5E';ctx.font='300 11px sans-serif';
+    ctx.fillText('数据:IUCN · 国家重点保护野生动物名录',W/2,H-40);
+  };
+
+  if(species.img){
+    const im=new Image();im.crossOrigin='anonymous';im.onload=()=>doDraw(im);im.onerror=()=>doDraw(null);im.src=species.img;
+  }else{doDraw(null)}
+
+  document.getElementById('share').classList.add('show');
+}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+  ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath()}
+function wrapText(ctx,text,x,y,maxW,lh){
+  const chars=[...text];let line='',lines=[];
+  for(const ch of chars){
+    const test=line+ch;if(ctx.measureText(test).width>maxW){lines.push(line);line=ch}else line=test;
+    if(lines.length>=3)break;
+  }
+  if(line&&lines.length<3)lines.push(line);
+  lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lh));
+}
+document.getElementById('share-close').addEventListener('click',()=>document.getElementById('share').classList.remove('show'));
+document.getElementById('share-dl').addEventListener('click',()=>{
+  const cvs=document.getElementById('share-canvas');
+  const a=document.createElement('a');a.download='万物共生-守护图鉴.png';a.href=cvs.toDataURL('image/png');a.click();
+});
+
+/* 打开物种时自动解锁 */
+const _origShowP=showP;
+showP=function(prov,terrain){
+  _origShowP(prov,terrain);
+  const pd=P[prov];if(!pd)return;
+  /* 先显示当前物种解锁 */
+  if(pd.animals[0])setTimeout(()=>unlockSpecies(pd.animals[0].n),400);
+};
+const _origRender=renderAnimal;
+renderAnimal=function(idx){
+  _origRender(idx);
+  const a=curAnimals[idx];if(a)setTimeout(()=>unlockSpecies(a.n),200);
+};
+
+/* FAB 初始化显示:等开场结束后 */
+const _origEnd=endCine;
+endCine=function(){_origEnd();setTimeout(updateFab,400)};
+
+/* ================== v14.3 BottomSheet 拖拽收合 ================== */
+(function(){
+  const panel=document.getElementById('panel');
+  let startY=0,startT=0,dragging=false,curTrans=0;
+  function isMobile(){return matchMedia('(max-width:720px)').matches}
+  panel.addEventListener('touchstart',e=>{
+    if(!isMobile())return;
+    /* 只在顶部 60px 范围内拖拽(避开滚动区域) */
+    const rect=panel.getBoundingClientRect();
+    if(e.touches[0].clientY-rect.top>80)return;
+    startY=e.touches[0].clientY;startT=performance.now();dragging=true;curTrans=0;
+    panel.style.transition='none';
+  },{passive:true});
+  panel.addEventListener('touchmove',e=>{
+    if(!dragging)return;
+    const dy=e.touches[0].clientY-startY;
+    if(dy<0)return;curTrans=dy;
+    panel.style.transform='translateY('+dy+'px)';
+  },{passive:true});
+  panel.addEventListener('touchend',()=>{
+    if(!dragging)return;dragging=false;
+    panel.style.transition='';
+    const dt=performance.now()-startT;const vel=curTrans/dt;
+    if(curTrans>140||vel>0.8){
+      /* 关闭 */
+      document.getElementById('pc').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));
+    }else{
+      panel.style.transform='';
+    }
+  });
+})();
+
+/* ================== 在 L2 抽屉底部追加数据来源标注 ================== */
+(function(){
+  const body=document.querySelector('.p-body');if(!body)return;
+  const note=document.createElement('div');note.className='src-note';note.id='p-src';
+  note.innerHTML='数据来源 · <b>IUCN</b> · <b>国家重点保护野生动物名录</b>';
+  body.appendChild(note);
+})();
 </script>
 </body>
 </html>
