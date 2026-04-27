@@ -573,6 +573,73 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
   color:var(--ink);border-color:transparent}
 .share-box .btn:hover{transform:translateY(-2px)}
 
+
+/* ========== v15.2 分享裂变 (Share Viral Loop) ========== */
+.share-box{max-width:460px}
+.share-box .gid-row{display:flex;align-items:center;justify-content:center;gap:8px;
+  margin:6px 0 14px;font-size:11px;letter-spacing:.22em;color:var(--mist-low)}
+.share-box .gid-row b{color:var(--gold);font-weight:600;letter-spacing:.2em;font-family:"SF Mono",monospace}
+.share-box .gid-row .lv-chip{display:inline-block;padding:2px 10px;border-radius:10px;
+  background:linear-gradient(135deg,#C8A057,#8E6B2E);color:#0F1419;font-weight:700;font-size:10px;letter-spacing:.12em}
+.share-box .stats-row{display:flex;gap:10px;margin:12px 0 6px}
+.share-box .stat-cell{flex:1;background:rgba(200,160,87,.06);border:1px solid rgba(200,160,87,.15);
+  border-radius:10px;padding:8px 4px;text-align:center}
+.share-box .stat-cell .num{color:var(--gold);font-size:18px;font-weight:700;font-family:"Noto Serif SC",serif}
+.share-box .stat-cell .lbl{color:var(--mist-low);font-size:9px;letter-spacing:.2em;margin-top:2px}
+.share-channels{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.share-channels .ch{display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:10px 4px;border-radius:12px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(200,160,87,.15);cursor:pointer;transition:.25s}
+.share-channels .ch:hover{transform:translateY(-3px);background:rgba(200,160,87,.1);border-color:rgba(200,160,87,.45)}
+.share-channels .ch .ic{width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;background:linear-gradient(135deg,#1f2832,#0f1419);font-size:16px}
+.share-channels .ch .lb{font-size:10px;color:var(--mist);letter-spacing:.1em}
+.share-box .act{margin-top:14px}
+.share-box .share-reward{margin-top:12px;padding:10px 12px;border-radius:10px;
+  background:linear-gradient(90deg,rgba(62,124,92,.12),rgba(200,160,87,.12));
+  border:1px solid rgba(200,160,87,.28);color:var(--mist);font-size:11px;letter-spacing:.12em;line-height:1.7;text-align:left}
+.share-box .share-reward b{color:var(--gold);font-weight:600}
+
+/* 吐司 toast */
+#toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%) translateY(20px);
+  background:rgba(15,20,25,.96);color:var(--gold);padding:10px 22px;border-radius:24px;
+  border:1px solid rgba(200,160,87,.35);font-size:12px;letter-spacing:.18em;
+  opacity:0;pointer-events:none;transition:.4s cubic-bezier(.22,1,.36,1);z-index:999;box-shadow:var(--shadow-lux)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* 邀请欢迎横幅 */
+#invite-welcome{position:fixed;top:calc(env(safe-area-inset-top,0px) + 68px);left:50%;
+  transform:translateX(-50%) translateY(-140%);z-index:90;
+  background:linear-gradient(135deg,rgba(15,20,25,.96),rgba(30,40,50,.96));
+  border:1px solid rgba(200,160,87,.4);border-radius:14px;padding:14px 18px;
+  max-width:90vw;width:360px;text-align:center;backdrop-filter:blur(14px);
+  box-shadow:var(--shadow-lux);transition:.7s cubic-bezier(.22,1,.36,1)}
+#invite-welcome.show{transform:translateX(-50%) translateY(0)}
+#invite-welcome .iw-t{color:var(--gold);font-family:"Noto Serif SC",serif;font-size:15px;
+  letter-spacing:.15em;font-weight:500}
+#invite-welcome .iw-s{color:var(--mist);font-size:11px;letter-spacing:.15em;margin-top:6px;line-height:1.7}
+#invite-welcome .iw-s b{color:var(--gold-deep)}
+#invite-welcome .iw-close{position:absolute;top:6px;right:10px;color:var(--mist-low);
+  background:none;border:none;font-size:16px;cursor:pointer;line-height:1}
+
+/* 守护者徽章 (右上悬浮) */
+#guardian-chip{position:fixed;top:calc(env(safe-area-inset-top,0px) + 14px);right:14px;z-index:35;
+  display:none;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;
+  background:rgba(15,20,25,.75);border:1px solid rgba(200,160,87,.32);
+  color:var(--gold);font-size:10px;letter-spacing:.2em;backdrop-filter:blur(8px);cursor:pointer;
+  transition:.3s}
+#guardian-chip.show{display:inline-flex}
+#guardian-chip:hover{background:rgba(200,160,87,.15);border-color:var(--gold)}
+#guardian-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:guardPulse 2s infinite}
+@keyframes guardPulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+@media (max-width:480px){
+  .share-channels{grid-template-columns:repeat(4,1fr);gap:8px}
+  .share-channels .ch{padding:8px 2px}
+  .share-channels .ch .ic{width:26px;height:26px;font-size:15px}
+  #invite-welcome{width:calc(100vw - 24px)}
+}
+
 /* ========== 数据来源小标识 ========== */
 .src-note{font-size:10px;color:var(--mist-low);letter-spacing:.2em;margin-top:18px;
   padding-top:12px;border-top:1px solid rgba(200,160,87,.1);font-style:italic}
@@ -870,12 +937,34 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
 <!-- v14.4 分享海报 Modal -->
 <div id="share">
   <div class="share-box">
-    <h3>我的守护图鉴</h3>
+    <h3 data-i18n="share.title">我的守护图鉴</h3>
+    <div class="gid-row">
+      <span data-i18n="share.gid">守护者编号</span>
+      <b id="share-gid">—</b>
+      <span class="lv-chip" id="share-lv">Lv.1</span>
+    </div>
     <canvas id="share-canvas" width="720" height="1280"></canvas>
-    <div class="hint">长按图片保存 · 分享给朋友<br>一起守护中国的濒危动物</div>
+    <div class="stats-row">
+      <div class="stat-cell"><div class="num" id="share-stat-u">0</div><div class="lbl" data-i18n="share.stat.unlocked">已守护</div></div>
+      <div class="stat-cell"><div class="num" id="share-stat-i">0</div><div class="lbl" data-i18n="share.stat.invited">邀约</div></div>
+      <div class="stat-cell"><div class="num" id="share-stat-f">0</div><div class="lbl" data-i18n="share.stat.friends">好友守护</div></div>
+    </div>
+    <div class="share-reward" id="share-reward-tip">
+      <b data-i18n="share.reward.title">分享奖励：</b><span data-i18n="share.reward.body">每邀请 1 位朋友成功解锁，你可额外获得 1 次稀有物种直解机会。</span>
+    </div>
+    <div class="share-channels">
+      <div class="ch" data-ch="wechat"><div class="ic">💬</div><div class="lb" data-i18n="share.ch.wechat">微信</div></div>
+      <div class="ch" data-ch="moments"><div class="ic">🌕</div><div class="lb" data-i18n="share.ch.moments">朋友圈</div></div>
+      <div class="ch" data-ch="weibo"><div class="ic">🅦</div><div class="lb" data-i18n="share.ch.weibo">微博</div></div>
+      <div class="ch" data-ch="x"><div class="ic">𝕏</div><div class="lb" data-i18n="share.ch.x">X</div></div>
+      <div class="ch" data-ch="dy"><div class="ic">🎬</div><div class="lb" data-i18n="share.ch.dy">抖音</div></div>
+      <div class="ch" data-ch="copy"><div class="ic">🔗</div><div class="lb" data-i18n="share.ch.copy">复制链接</div></div>
+      <div class="ch" data-ch="native"><div class="ic">📤</div><div class="lb" data-i18n="share.ch.native">系统分享</div></div>
+      <div class="ch" data-ch="save"><div class="ic">💾</div><div class="lb" data-i18n="share.ch.save">保存图片</div></div>
+    </div>
+    <div class="hint" data-i18n="share.hint">长按海报保存 · 分享给朋友 · 一起守护中国的濒危动物</div>
     <div class="act">
-      <button class="btn" id="share-dl">下载海报</button>
-      <button class="btn primary" id="share-close">关闭</button>
+      <button class="btn primary" id="share-close" data-i18n="share.close">完成守护</button>
     </div>
   </div>
 </div>
@@ -2038,6 +2127,276 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElement
 const _origEnd15=endCine;
 endCine=function(){_origEnd15();setTimeout(()=>{document.getElementById('v15-tools').classList.add('reveal')},800)};
 
+
+/* ========================= v15.2 分享裂变系统 ========================= */
+(function(){
+const LS_GID='wwgs_gid_v1';
+const LS_REF='wwgs_ref_v1';     // 自己的被邀请人
+const LS_INV='wwgs_inv_v1';     // 我带来的邀请数
+const LS_FRIEND='wwgs_friend_v1'; // 好友守护(累计)
+const LS_SHARECNT='wwgs_share_v1'; // 分享次数
+const LS_BONUS='wwgs_bonus_v1';    // 分享解锁额度
+
+/* 守护者 ID 生成 (G + 6 位 36 进制 + 2 位随机) */
+function genGID(){
+  const t=Date.now().toString(36).toUpperCase().slice(-6);
+  const r=Math.floor(Math.random()*46655).toString(36).toUpperCase().padStart(3,'0');
+  return 'G'+t+r;
+}
+function getGID(){
+  let g=localStorage.getItem(LS_GID);
+  if(!g){g=genGID();try{localStorage.setItem(LS_GID,g)}catch(e){}}
+  return g;
+}
+function getInt(k){return parseInt(localStorage.getItem(k)||'0',10)||0}
+function setInt(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
+
+/* 等级:unlocked+invited*3 综合积分 */
+function guardianLevel(){
+  const u=(window.unlockedSet&&unlockedSet.size)||0;
+  const i=getInt(LS_INV);
+  const score=u+i*3;
+  if(score>=30) return {lv:5,name:'守护使者',nameEn:'Envoy'};
+  if(score>=18) return {lv:4,name:'星海守望',nameEn:'Stargazer'};
+  if(score>=10) return {lv:3,name:'传播大使',nameEn:'Ambassador'};
+  if(score>=4)  return {lv:2,name:'见证者',nameEn:'Witness'};
+  return           {lv:1,name:'新守护者',nameEn:'Novice'};
+}
+
+/* URL 参数处理 — ?ref=Gxxxx */
+(function handleRef(){
+  try{
+    const u=new URL(location.href);
+    const ref=u.searchParams.get('ref');
+    const myGID=getGID();
+    if(ref && ref!==myGID && !localStorage.getItem(LS_REF)){
+      localStorage.setItem(LS_REF,ref);
+      setInt(LS_BONUS,getInt(LS_BONUS)+1);    // 被邀约者首次进入送 1 次奖励
+      // 展示欢迎
+      setTimeout(()=>{
+        const iw=document.getElementById('invite-welcome');
+        const who=document.getElementById('iw-inviter');
+        if(iw&&who){who.textContent=ref;iw.classList.add('show');
+          setTimeout(()=>iw.classList.remove('show'),6500);}
+      },9000); // 开场之后再弹
+    }
+  }catch(e){}
+})();
+
+document.addEventListener('click',e=>{
+  if(e.target.closest&&e.target.closest('#invite-welcome .iw-close')){
+    document.getElementById('invite-welcome').classList.remove('show');
+  }
+});
+
+/* 吐司 */
+window.toast=function(msg,ms){
+  const t=document.getElementById('toast');if(!t)return;
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._ti);t._ti=setTimeout(()=>t.classList.remove('show'),ms||2200);
+};
+
+/* 守护者徽章 */
+function updateGuardianChip(){
+  const chip=document.getElementById('guardian-chip');if(!chip)return;
+  const gid=getGID();const L=guardianLevel();
+  const lang=(window.currentLang||localStorage.getItem('wwgs_lang')||'zh');
+  const label=lang==='en'?('GUARDIAN · Lv.'+L.lv+' '+L.nameEn):('守护者 · Lv.'+L.lv+' '+L.name);
+  const txt=document.getElementById('gc-text');if(txt)txt.textContent=label;
+  // 在开场动画结束且用户已有解锁或被邀请或分享 时显示
+  if((window.unlockedSet&&unlockedSet.size>0)||localStorage.getItem(LS_REF)||getInt(LS_SHARECNT)>0){
+    chip.classList.add('show');
+  }
+}
+window.updateGuardianChip=updateGuardianChip;
+document.getElementById('guardian-chip')?.addEventListener('click',()=>{
+  const gid=getGID();const L=guardianLevel();
+  toast('守护者 '+gid+' · Lv.'+L.lv+' '+L.name);
+});
+
+/* 构建邀请链接 */
+function buildInviteURL(){
+  const u=new URL(location.href.split('#')[0]);
+  u.searchParams.set('ref',getGID());
+  u.searchParams.set('utm','share');
+  return u.toString();
+}
+window.buildInviteURL=buildInviteURL;
+
+/* 复制文本 */
+function copy(text){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text);
+  }
+  return new Promise((res,rej)=>{
+    try{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);res();
+    }catch(e){rej(e)}
+  });
+}
+
+/* 二维码 (quickchart.io/qr) */
+function qrURL(text,sz){return 'https://quickchart.io/qr?text='+encodeURIComponent(text)+'&size='+(sz||220)+'&light=0F1419&dark=C8A057&margin=1'}
+
+/* 扩展海报:在 openShare 之外再绘一层 */
+function decorateShareCanvas(species){
+  const cvs=document.getElementById('share-canvas');if(!cvs)return;
+  const ctx=cvs.getContext('2d');const W=cvs.width,H=cvs.height;
+  const gid=getGID();const L=guardianLevel();
+  const inviteURL=buildInviteURL();
+  // 底部左下:守护者 ID & 等级
+  ctx.save();
+  ctx.fillStyle='rgba(15,20,25,.85)';
+  ctx.fillRect(60,H-260,220,56);
+  ctx.strokeStyle='rgba(200,160,87,.35)';ctx.lineWidth=1;
+  ctx.strokeRect(60,H-260,220,56);
+  ctx.fillStyle='#6E6A5E';ctx.font='300 10px sans-serif';ctx.textAlign='left';
+  ctx.fillText('GUARDIAN',74,H-242);
+  ctx.fillStyle='#C8A057';ctx.font='600 16px "SF Mono",monospace';
+  ctx.fillText(gid,74,H-222);
+  ctx.fillStyle='#B8B1A0';ctx.font='500 10px sans-serif';
+  ctx.fillText('Lv.'+L.lv+' · '+L.name,74,H-208);
+  ctx.restore();
+
+  // 右下二维码
+  const qim=new Image();qim.crossOrigin='anonymous';
+  qim.onload=()=>{
+    try{
+      ctx.save();
+      ctx.fillStyle='rgba(15,20,25,.9)';ctx.fillRect(W-180,H-260,120,120);
+      ctx.strokeStyle='rgba(200,160,87,.35)';ctx.strokeRect(W-180,H-260,120,120);
+      ctx.drawImage(qim,W-170,H-250,100,100);
+      ctx.fillStyle='#6E6A5E';ctx.font='300 10px sans-serif';ctx.textAlign='center';
+      ctx.fillText('扫码加入守护',W-120,H-128);
+      ctx.restore();
+    }catch(e){}
+  };
+  qim.onerror=()=>{};
+  qim.src=qrURL(inviteURL,200);
+
+  // 刷新 modal 中的数值
+  document.getElementById('share-gid').textContent=gid;
+  document.getElementById('share-lv').textContent='Lv.'+L.lv+' '+L.name;
+  document.getElementById('share-stat-u').textContent=(window.unlockedSet?.size)||0;
+  document.getElementById('share-stat-i').textContent=getInt(LS_INV);
+  document.getElementById('share-stat-f').textContent=getInt(LS_FRIEND);
+}
+
+/* 包装 openShare:在原有绘制后追加装饰 */
+if(typeof window.openShare==='function'){
+  const _origOpen=window.openShare;
+  window.openShare=function(species){
+    _origOpen(species);
+    window._lastShareSpecies=species;
+    // 等待原有 image 加载完后装饰(延时兜底)
+    setTimeout(()=>decorateShareCanvas(species),60);
+    setTimeout(()=>decorateShareCanvas(species),900);
+  };
+}
+
+/* 分享文案 */
+function shareText(species){
+  const lang=(window.currentLang||localStorage.getItem('wwgs_lang')||'zh');
+  const url=buildInviteURL();
+  if(lang==='en'){
+    const n=species?.n||'endangered species';
+    return {t:'I just guarded '+n+' · China Living Atlas',
+      s:'Join me to protect 100+ endangered species in China. '+url,url};
+  }
+  const n=species?.n||'中国濒危动物';
+  return {t:'我刚刚守护了【'+n+'】· 万物共生',
+    s:'来和我一起守护中国 100+ 濒危物种,每一次看见都是一次守护。'+url,url};
+}
+
+/* 渠道跳转 */
+const CH = {
+  wechat:(m)=>{copy(m.s);toast('文案已复制 · 请打开微信粘贴分享')},
+  moments:(m)=>{copy(m.s);toast('文案已复制 · 请打开微信-发现-朋友圈')},
+  weibo:(m)=>{
+    const u='https://service.weibo.com/share/share.php?url='+encodeURIComponent(m.url)+'&title='+encodeURIComponent(m.t+' '+m.s);
+    window.open(u,'_blank','noopener');
+  },
+  x:(m)=>{
+    const u='https://twitter.com/intent/tweet?text='+encodeURIComponent(m.t+' '+m.s);
+    window.open(u,'_blank','noopener');
+  },
+  dy:(m)=>{copy(m.s);toast('文案已复制 · 请打开抖音 App 粘贴')},
+  copy:(m)=>{copy(m.url).then(()=>toast('邀请链接已复制'))},
+  native:(m)=>{
+    if(navigator.share){
+      navigator.share({title:m.t,text:m.s,url:m.url}).catch(()=>{});
+    }else{copy(m.s).then(()=>toast('已复制 · 请粘贴到任意 App'))}
+  },
+  save:()=>{
+    const cvs=document.getElementById('share-canvas');
+    const a=document.createElement('a');a.download='万物共生-守护海报.png';a.href=cvs.toDataURL('image/png');a.click();
+    toast('海报已保存 到相册/下载目录');
+  }
+};
+
+function onChannel(ch){
+  const sp=window._lastShareSpecies||{n:'中国濒危动物'};
+  const m=shareText(sp);
+  (CH[ch]||CH.copy)(m);
+  // 记账
+  const nx=getInt(LS_SHARECNT)+1;setInt(LS_SHARECNT,nx);
+  // 首次分享送 1 次 bonus
+  if(nx===1){setInt(LS_BONUS,getInt(LS_BONUS)+1);setTimeout(()=>toast('🎁 分享奖励 +1 解锁机会'),1200)}
+  updateGuardianChip();
+}
+
+document.addEventListener('click',e=>{
+  const ch=e.target.closest&&e.target.closest('.share-channels .ch');
+  if(ch){onChannel(ch.dataset.ch)}
+});
+
+/* 监听 unlockedSet 变化 — 覆盖原 updateFab 触发更新 */
+if(typeof window.updateFab==='function'){
+  const _of=window.updateFab;
+  window.updateFab=function(){_of();updateGuardianChip()};
+}
+
+/* 页面加载后:延迟显示 chip */
+setTimeout(updateGuardianChip,1200);
+setInterval(updateGuardianChip,4000);
+
+/* 暴露给 applyI18n */
+window.__v152_i18n={
+  zh:{
+    'share.title':'我的守护图鉴',
+    'share.gid':'守护者编号',
+    'share.stat.unlocked':'已守护','share.stat.invited':'邀约','share.stat.friends':'好友守护',
+    'share.reward.title':'分享奖励：','share.reward.body':'每邀请 1 位朋友成功解锁，你可额外获得 1 次稀有物种直解机会。',
+    'share.ch.wechat':'微信','share.ch.moments':'朋友圈','share.ch.weibo':'微博','share.ch.x':'X',
+    'share.ch.dy':'抖音','share.ch.copy':'复制链接','share.ch.native':'系统分享','share.ch.save':'保存图片',
+    'share.hint':'长按海报保存 · 分享给朋友 · 一起守护中国的濒危动物',
+    'share.close':'完成守护',
+    'invite.title':'你被一位朋友召唤加入守护',
+    'invite.sub':'邀请人','invite.gift':'· 首次解锁额外奖励 1 张稀有物种卡 ·'
+  },
+  en:{
+    'share.title':'My Guardian Atlas',
+    'share.gid':'Guardian ID',
+    'share.stat.unlocked':'Unlocked','share.stat.invited':'Invited','share.stat.friends':'Allies',
+    'share.reward.title':'Viral Reward: ','share.reward.body':'Every friend who unlocks via your link grants you one extra rare-species pass.',
+    'share.ch.wechat':'WeChat','share.ch.moments':'Moments','share.ch.weibo':'Weibo','share.ch.x':'X',
+    'share.ch.dy':'Douyin','share.ch.copy':'Copy link','share.ch.native':'Share…','share.ch.save':'Save poster',
+    'share.hint':'Long-press to save · Share with friends · Guard China\'s wild',
+    'share.close':'Seal the Oath',
+    'invite.title':'A friend has summoned you to guard',
+    'invite.sub':'Inviter','invite.gift':'· First unlock grants you a bonus rare card ·'
+  }
+};
+// 合并到 I18N 字典 (若存在)
+if(window.I18N){
+  Object.keys(window.__v152_i18n.zh).forEach(k=>{window.I18N.zh[k]=window.__v152_i18n.zh[k]});
+  Object.keys(window.__v152_i18n.en).forEach(k=>{window.I18N.en[k]=window.__v152_i18n.en[k]});
+  if(typeof window.applyI18n==='function'){try{window.applyI18n()}catch(e){}}
+}
+
+})();
+/* ========================= v15.2 END ========================= */
+
 </script>
 
 <!-- v14.6 Reveal Overlay -->
@@ -2099,6 +2458,18 @@ endCine=function(){_origEnd15();setTimeout(()=>{document.getElementById('v15-too
   </div>
 </div>
 </div>
+
+
+<!-- v15.2 守护者身份 / 邀请欢迎 / 吐司 -->
+<div id="guardian-chip" title="点击查看守护者信息">
+  <span class="dot"></span><span id="gc-text">GUARDIAN · Lv.1</span>
+</div>
+<div id="invite-welcome">
+  <button class="iw-close" aria-label="close">×</button>
+  <div class="iw-t" data-i18n="invite.title">你被一位朋友召唤加入守护</div>
+  <div class="iw-s"><span data-i18n="invite.sub">邀请人</span>：<b id="iw-inviter">—</b><br><span data-i18n="invite.gift">· 首次解锁额外奖励 1 张稀有物种卡 ·</span></div>
+</div>
+<div id="toast"></div>
 
 </body>
 </html>
