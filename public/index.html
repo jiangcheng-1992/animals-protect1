@@ -374,11 +374,33 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
 .im-hero .latin{font-style:italic;color:var(--mist-low);font-size:16px;letter-spacing:.1em;margin-bottom:34px}
 .im-hero .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:44px}
 .im-hero .chips .p-tag,.im-hero .chips .p-terrain-tag{font-size:12px;padding:5px 16px;border-radius:14px}
-.im-hero .scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
-  font-size:10px;letter-spacing:.45em;color:var(--mist-low);text-align:center;animation:scrollHint 2.4s ease-in-out infinite}
-.im-hero .scroll-hint::after{content:"";display:block;width:1px;height:40px;margin:10px auto 0;
-  background:linear-gradient(180deg,var(--gold),transparent)}
-@keyframes scrollHint{0%,100%{opacity:.4;transform:translate(-50%,0)}50%{opacity:1;transform:translate(-50%,6px)}}
+.im-hero .scroll-hint{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:10px;z-index:3;
+  padding:14px 26px 16px;border-radius:30px;
+  background:linear-gradient(180deg,rgba(200,160,87,.16),rgba(200,160,87,.04));
+  border:1px solid rgba(200,160,87,.55);
+  box-shadow:0 10px 34px rgba(0,0,0,.45),0 0 24px rgba(200,160,87,.28),inset 0 1px 0 rgba(255,248,220,.18);
+  backdrop-filter:blur(10px);
+  font-size:12px;letter-spacing:.42em;color:var(--gold);text-align:center;font-weight:500;
+  cursor:pointer;animation:scrollHintPulse 1.8s ease-in-out infinite}
+.im-hero .scroll-hint .line1{font-family:"Noto Serif SC",serif;font-size:13px;color:#F4E5B8;text-shadow:0 0 10px rgba(200,160,87,.6)}
+.im-hero .scroll-hint .line2{font-size:9px;letter-spacing:.6em;color:rgba(200,160,87,.8)}
+.im-hero .scroll-hint .chev{display:flex;flex-direction:column;align-items:center;gap:-2px;margin-top:2px}
+.im-hero .scroll-hint .chev svg{width:18px;height:10px;display:block;
+  stroke:#C8A057;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;fill:none;
+  filter:drop-shadow(0 0 6px rgba(200,160,87,.7))}
+.im-hero .scroll-hint .chev svg:nth-child(1){animation:chevDown 1.4s ease-in-out infinite}
+.im-hero .scroll-hint .chev svg:nth-child(2){animation:chevDown 1.4s ease-in-out .2s infinite;opacity:.6}
+.im-hero .scroll-hint .chev svg:nth-child(3){animation:chevDown 1.4s ease-in-out .4s infinite;opacity:.3}
+@keyframes scrollHintPulse{
+  0%,100%{transform:translate(-50%,0);box-shadow:0 10px 34px rgba(0,0,0,.45),0 0 24px rgba(200,160,87,.28),inset 0 1px 0 rgba(255,248,220,.18)}
+  50%{transform:translate(-50%,8px);box-shadow:0 14px 40px rgba(0,0,0,.55),0 0 40px rgba(200,160,87,.55),inset 0 1px 0 rgba(255,248,220,.3)}
+}
+@keyframes chevDown{
+  0%{opacity:0;transform:translateY(-4px)}
+  40%{opacity:1;transform:translateY(0)}
+  100%{opacity:0;transform:translateY(6px)}
+}
 
 /* 数据卡 */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;margin-top:44px}
@@ -892,7 +914,7 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
     <canvas id="share-canvas" width="720" height="1280"></canvas>
     <div class="hint">长按图片保存 · 分享给朋友<br>一起守护中国的濒危动物</div>
     <div class="act">
-      <button class="btn" id="share-dl">下载海报</button>
+      <button class="btn" id="share-dl">💾 保存海报</button>
       <button class="btn primary" id="share-close">关闭</button>
     </div>
   </div>
@@ -1410,7 +1432,15 @@ function buildImmersive(animal,provName,terrainKey){
         ${tn?`<span class="p-terrain-tag">${tn.name}</span>`:''}
       </div>
     </div>
-    <div class="scroll-hint">滚 动 探 索<br>SCROLL</div>
+    <div class="scroll-hint" id="scroll-hint-entry">
+      <div class="line1">向 下 滚 动 探 索</div>
+      <div class="line2">SCROLL DOWN</div>
+      <div class="chev">
+        <svg viewBox="0 0 18 10"><polyline points="2,2 9,8 16,2"/></svg>
+        <svg viewBox="0 0 18 10"><polyline points="2,2 9,8 16,2"/></svg>
+        <svg viewBox="0 0 18 10"><polyline points="2,2 9,8 16,2"/></svg>
+      </div>
+    </div>
   </section>
 
   <!-- IDENTIFICATION -->
@@ -1636,10 +1666,25 @@ function closeAtlas(){document.getElementById('atlas').classList.remove('show');
 document.getElementById('atlas-fab').addEventListener('click',openAtlas);
 document.getElementById('atlas-close').addEventListener('click',closeAtlas);
 
-/* 海报生成 */
-function openShare(species){
-  const cvs=document.getElementById('share-canvas');const ctx=cvs.getContext('2d');
-  const W=720,H=1280;cvs.width=W;cvs.height=H;
+/* 海报生成 — v15.6: 立即弹出 + 骨架屏 + 异步图片 + 二维码 */
+/* 图片缓存: 避免每次重新加载 */
+const _shareImgCache=new Map();
+const _shareQrCache=new Map();
+function preloadSpeciesImg(url){
+  if(!url||_shareImgCache.has(url))return;
+  const im=new Image();im.crossOrigin='anonymous';
+  im.onload=()=>_shareImgCache.set(url,im);
+  im.onerror=()=>_shareImgCache.set(url,null);
+  im.src=url;
+  _shareImgCache.set(url,im); // 先占位,load 后覆盖
+}
+/* 图鉴卡片渲染后批量预热 */
+function preloadAtlasThumbs(){
+  try{ALL_SPECIES.slice(0,40).forEach(s=>preloadSpeciesImg(s.img));}catch(e){}
+}
+setTimeout(preloadAtlasThumbs,4000);
+
+function drawShareStatic(ctx,species,W,H){
   /* 背景 */
   const g=ctx.createLinearGradient(0,0,0,H);
   g.addColorStop(0,'#1a2028');g.addColorStop(.5,'#0f1419');g.addColorStop(1,'#05080c');
@@ -1652,64 +1697,132 @@ function openShare(species){
   ctx.fillStyle='#C8A057';ctx.font='600 18px "Noto Serif SC", serif';ctx.textAlign='center';
   ctx.fillText('万 物 共 生',W/2,80);
   ctx.fillStyle='#6E6A5E';ctx.font='300 12px sans-serif';
-  ctx.fillText('THE LIVING ATLAS OF CHINA\'S ENDANGERED SPECIES',W/2,104);
+  ctx.fillText("THE LIVING ATLAS OF CHINA'S ENDANGERED SPECIES",W/2,104);
+}
+function drawImageArea(ctx,img,W){
+  ctx.save();
+  roundRect(ctx,60,160,W-120,540,18);ctx.clip();
+  if(img){
+    try{
+      /* cover 方式填充 */
+      const tw=W-120,th=540;
+      const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;
+      const scale=Math.max(tw/iw,th/ih);
+      const dw=iw*scale,dh=ih*scale;
+      const dx=60+(tw-dw)/2,dy=160+(th-dh)/2;
+      ctx.drawImage(img,dx,dy,dw,dh);
+    }catch(e){drawImgPH(ctx,W)}
+  }else{drawImgPH(ctx,W)}
+  ctx.restore();
+}
+function drawImgPH(ctx,W){
+  const g=ctx.createLinearGradient(60,160,60,700);
+  g.addColorStop(0,'#2a3440');g.addColorStop(1,'#151b23');
+  ctx.fillStyle=g;ctx.fillRect(60,160,W-120,540);
+  ctx.fillStyle='rgba(200,160,87,.28)';ctx.font='200 84px sans-serif';ctx.textAlign='center';
+  ctx.fillText('🐾',W/2,450);
+}
+function drawSkeleton(ctx,W){
+  /* 骨架屏:渐变条纹 */
+  ctx.save();
+  roundRect(ctx,60,160,W-120,540,18);ctx.clip();
+  const g=ctx.createLinearGradient(60,160,60,700);
+  g.addColorStop(0,'#1f2832');g.addColorStop(.5,'#2a3440');g.addColorStop(1,'#1f2832');
+  ctx.fillStyle=g;ctx.fillRect(60,160,W-120,540);
+  ctx.fillStyle='rgba(200,160,87,.18)';ctx.font='300 16px sans-serif';ctx.textAlign='center';
+  ctx.fillText('· 图像加载中 ·',W/2,440);
+  ctx.restore();
+}
+function drawShareForeground(ctx,species,W,H){
+  /* 遮罩渐变 */
+  const gi=ctx.createLinearGradient(0,400,0,700);
+  gi.addColorStop(0,'rgba(15,20,25,0)');gi.addColorStop(1,'rgba(15,20,25,.95)');
+  ctx.fillStyle=gi;ctx.fillRect(60,400,W-120,300);
+  /* 等级标签 */
+  const lvColor=({CR:'#C0392B',EN:'#D47A3A',VU:'#B9923B',NT:'#3F7A89'})[species.lv];
+  const lvT=({CR:'极危',EN:'濒危',VU:'易危',NT:'近危'})[species.lv]||'';
+  ctx.fillStyle=lvColor;roundRect(ctx,80,180,86,30,6);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='700 14px sans-serif';ctx.textAlign='center';
+  ctx.fillText(species.lv+' · '+lvT,123,200);
+  /* 物种名 */
+  ctx.textAlign='center';
+  ctx.fillStyle='#E7E2D6';ctx.font='500 64px "Noto Serif SC", serif';
+  ctx.fillText(species.n,W/2,790);
+  ctx.fillStyle='#B8B1A0';ctx.font='italic 18px serif';
+  ctx.fillText(species.la,W/2,824);
+  ctx.fillStyle='#C8A057';ctx.font='500 14px sans-serif';
+  ctx.fillText('— 发现于 '+species.prov+' —',W/2,862);
+  ctx.fillStyle='#B8B1A0';ctx.font='400 17px "Noto Serif SC",serif';
+  wrapText(ctx,species.d||'',W/2,920,W-180,28);
+  /* 图鉴进度 */
+  const u=unlockedSet.size,t=ALL_SPECIES.length,pct=t?u/t:0;
+  ctx.fillStyle='#6E6A5E';ctx.font='400 13px sans-serif';ctx.textAlign='left';
+  ctx.fillText('我的图鉴  '+u+' / '+t,90,H-210);
+  ctx.fillStyle='rgba(200,160,87,.2)';roundRect(ctx,90,H-200,W-180,6,3);ctx.fill();
+  ctx.fillStyle='#C8A057';roundRect(ctx,90,H-200,(W-180)*pct,6,3);ctx.fill();
+  /* 底部主标语 */
+  ctx.fillStyle='#C8A057';ctx.font='500 14px "Noto Serif SC",serif';ctx.textAlign='center';
+  ctx.fillText('每一次看见 · 都是一次守护',W/2,H-70);
+  ctx.fillStyle='#6E6A5E';ctx.font='300 11px sans-serif';
+  ctx.fillText('数据:IUCN · 国家重点保护野生动物名录',W/2,H-40);
+}
+function drawQR(ctx,img,W,H){
+  /* 右下角二维码框 */
+  const qs=108,qx=W-60-qs,qy=H-170;
+  ctx.save();
+  ctx.fillStyle='#fff';roundRect(ctx,qx-6,qy-6,qs+12,qs+12,8);ctx.fill();
+  if(img){try{ctx.drawImage(img,qx,qy,qs,qs)}catch(e){}}
+  else{ctx.fillStyle='#0F1419';ctx.fillRect(qx,qy,qs,qs);
+    ctx.fillStyle='#C8A057';ctx.font='600 14px sans-serif';ctx.textAlign='center';
+    ctx.fillText('QR',qx+qs/2,qy+qs/2+5);}
+  ctx.restore();
+  /* 左侧文案 */
+  ctx.fillStyle='#C8A057';ctx.font='600 13px "Noto Serif SC",serif';ctx.textAlign='left';
+  ctx.fillText('扫 码 · 开 启 守 护',80,H-140);
+  ctx.fillStyle='#6E6A5E';ctx.font='300 10px sans-serif';
+  ctx.fillText('animals-protect1.onrender.com',80,H-118);
+  ctx.fillText('3D 交互地图 · 100+ 濒危物种',80,H-100);
+}
 
-  const doDraw=(imgReady)=>{
-    /* 图片/占位 */
-    if(imgReady){
-      try{ctx.drawImage(imgReady,60,160,W-120,540)}catch(e){drawPH()}
-    }else{drawPH()}
-    function drawPH(){
-      ctx.fillStyle='#1a2028';ctx.fillRect(60,160,W-120,540);
-      ctx.fillStyle='#3d4a5a';ctx.font='300 14px sans-serif';ctx.textAlign='center';
-      ctx.fillText('— 守护 · 无图 —',W/2,430);
-    }
-    /* 遮罩渐变 */
-    const gi=ctx.createLinearGradient(0,400,0,700);
-    gi.addColorStop(0,'rgba(15,20,25,0)');gi.addColorStop(1,'rgba(15,20,25,.95)');
-    ctx.fillStyle=gi;ctx.fillRect(60,400,W-120,300);
+function openShare(species){
+  const cvs=document.getElementById('share-canvas');const ctx=cvs.getContext('2d');
+  const W=720,H=1280;cvs.width=W;cvs.height=H;
 
-    /* 等级标签 */
-    const lvColor=({CR:'#C0392B',EN:'#D47A3A',VU:'#B9923B',NT:'#3F7A89'})[species.lv];
-    const lvT=({CR:'极危',EN:'濒危',VU:'易危',NT:'近危'})[species.lv]||'';
-    ctx.fillStyle=lvColor;
-    roundRect(ctx,80,180,86,30,6);ctx.fill();
-    ctx.fillStyle='#fff';ctx.font='700 14px sans-serif';ctx.textAlign='center';
-    ctx.fillText(species.lv+' · '+lvT,123,200);
-
-    /* 物种名 */
-    ctx.textAlign='center';
-    ctx.fillStyle='#E7E2D6';ctx.font='500 64px "Noto Serif SC", serif';
-    ctx.fillText(species.n,W/2,790);
-    /* 拉丁名 */
-    ctx.fillStyle='#B8B1A0';ctx.font='italic 18px serif';
-    ctx.fillText(species.la,W/2,824);
-    /* 省份 */
-    ctx.fillStyle='#C8A057';ctx.font='500 14px sans-serif';
-    ctx.fillText('— 发现于 '+species.prov+' —',W/2,862);
-    /* 描述 */
-    ctx.fillStyle='#B8B1A0';ctx.font='400 17px "Noto Serif SC",serif';ctx.textAlign='center';
-    wrapText(ctx,species.d||'',W/2,920,W-180,28);
-
-    /* 图鉴进度 */
-    const u=unlockedSet.size,t=ALL_SPECIES.length,pct=t?u/t:0;
-    ctx.fillStyle='#6E6A5E';ctx.font='400 13px sans-serif';ctx.textAlign='left';
-    ctx.fillText('我的图鉴  '+u+' / '+t,90,H-120);
-    ctx.fillStyle='rgba(200,160,87,.2)';roundRect(ctx,90,H-110,W-180,6,3);ctx.fill();
-    ctx.fillStyle='#C8A057';roundRect(ctx,90,H-110,(W-180)*pct,6,3);ctx.fill();
-
-    /* 底部 */
-    ctx.fillStyle='#C8A057';ctx.font='500 14px "Noto Serif SC",serif';ctx.textAlign='center';
-    ctx.fillText('每一次看见 · 都是一次守护',W/2,H-70);
-    ctx.fillStyle='#6E6A5E';ctx.font='300 11px sans-serif';
-    ctx.fillText('数据:IUCN · 国家重点保护野生动物名录',W/2,H-40);
-  };
-
-  if(species.img){
-    const im=new Image();im.crossOrigin='anonymous';im.onload=()=>doDraw(im);im.onerror=()=>doDraw(null);im.src=species.img;
-  }else{doDraw(null)}
-
+  /* 1. 立刻显示弹窗(无论图片是否就绪) */
   document.getElementById('share').classList.add('show');
+
+  /* 2. 立即画背景 + 骨架屏 + 前景文字(占位不阻塞) */
+  drawShareStatic(ctx,species,W,H);
+  drawSkeleton(ctx,W);
+  drawShareForeground(ctx,species,W,H);
+
+  /* 3. 异步加载图片 (命中缓存则直接用) */
+  const cached=species.img?_shareImgCache.get(species.img):null;
+  const onImgReady=(img)=>{
+    drawShareStatic(ctx,species,W,H);
+    drawImageArea(ctx,img,W);
+    drawShareForeground(ctx,species,W,H);
+    /* 画二维码 */
+    const qrUrl=location.origin+location.pathname;
+    const qrKey='qr:'+qrUrl;
+    const qrCached=_shareQrCache.get(qrKey);
+    if(qrCached&&qrCached.complete){drawQR(ctx,qrCached,W,H)}
+    else{
+      const qim=new Image();qim.crossOrigin='anonymous';
+      qim.onload=()=>{_shareQrCache.set(qrKey,qim);drawQR(ctx,qim,W,H)};
+      qim.onerror=()=>drawQR(ctx,null,W,H);
+      qim.src='https://api.qrserver.com/v1/create-qr-code/?size=216x216&margin=2&bgcolor=ffffff&color=0F1419&data='+encodeURIComponent(qrUrl);
+    }
+  };
+  if(!species.img){onImgReady(null);return}
+  if(cached&&cached.complete&&cached.naturalWidth>0){
+    onImgReady(cached);
+  }else{
+    const im=new Image();im.crossOrigin='anonymous';
+    im.onload=()=>{_shareImgCache.set(species.img,im);onImgReady(im)};
+    im.onerror=()=>{_shareImgCache.set(species.img,null);onImgReady(null)};
+    im.src=species.img;
+  }
 }
 function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
   ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
@@ -1823,6 +1936,16 @@ endCine=function(){_origEnd();setTimeout(updateFab,400)};
   }
   function hideReveal(){document.getElementById('reveal').classList.remove('show')}
 
+  
+  /* v15.5 点击 scroll-hint 直接向下滚一屏 */
+  document.addEventListener('click',function(ev){
+    const h=ev.target.closest('#scroll-hint-entry');
+    if(!h)return;
+    const im=document.getElementById('immer')||document.scrollingElement;
+    const sc=im.scrollTop!==undefined?im:document.documentElement;
+    const top=(sc.scrollTop||window.scrollY)+window.innerHeight*0.92;
+    if(sc.scrollTo){sc.scrollTo({top,behavior:'smooth'})}else{window.scrollTo({top,behavior:'smooth'})}
+  });
   document.getElementById('rev-close').addEventListener('click',hideReveal);
   document.getElementById('rev-continue').addEventListener('click',()=>{hideReveal();closeImmersive()});
   document.getElementById('rev-atlas').addEventListener('click',()=>{hideReveal();closeImmersive();setTimeout(openAtlas,320)});
