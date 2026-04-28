@@ -911,6 +911,24 @@ html,body{width:100%;height:100%;background:var(--ink);color:var(--mist);
 }
 
 </style>
+
+<!-- ===== v16.2 访问埋点 ===== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GHG4QDL2WJ"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments)}
+  gtag('js',new Date());
+  gtag('config','G-GHG4QDL2WJ',{
+    page_title:'万物共生 · 中国濒危动物地图',
+    send_page_view:true
+  });
+  // 自定义事件埋点辅助
+  window.track=function(name,params){
+    try{gtag('event',name,params||{})}catch(e){}
+    // 同时推送到 CountAPI(可选,用于更多维度)
+  };
+</script>
+
 </head>
 <body>
 <!-- ===== 6秒开场序幕 ===== -->
@@ -2308,6 +2326,63 @@ endCine=function(){_origEnd15();setTimeout(()=>{document.getElementById('v15-too
 </div>
 </div>
 
+
+
+<!-- 访问计数角标 -->
+<div id="visit-counter" style="position:fixed;left:12px;bottom:12px;z-index:20;
+  padding:7px 12px;border-radius:20px;font-family:'Noto Serif SC',serif;
+  background:linear-gradient(135deg,rgba(15,20,25,.85),rgba(21,27,35,.85));
+  border:1px solid rgba(200,160,87,.3);backdrop-filter:blur(10px);
+  color:#C8A057;font-size:10px;letter-spacing:.12em;
+  display:none;align-items:center;gap:6px;
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+  transition:opacity .6s;opacity:0">
+  <span style="width:6px;height:6px;border-radius:50%;background:#C8A057;
+    box-shadow:0 0 8px #C8A057;animation:vc-pulse 2s infinite"></span>
+  <span>守护者 <b id="vc-n" style="color:#E8D9B5;font-weight:600">—</b> 位</span>
+</div>
+<style>
+@keyframes vc-pulse{0%,100%{opacity:.5}50%{opacity:1}}
+/* 移动端更紧凑,避免与图例冲突 */
+@media (max-width:720px){
+  #visit-counter{left:auto;right:12px;bottom:auto;top:58px;
+    padding:5px 10px;font-size:9.5px;letter-spacing:.08em}
+}
+</style>
+<script>
+(function(){
+  var ns='animals-protect1',key='visits';
+  var el=document.getElementById('visit-counter'),n=document.getElementById('vc-n');
+  if(!el)return;
+  // 单会话去重
+  var SEEN='wwgs_visited_session';
+  var firstVisit=!sessionStorage.getItem(SEEN);
+  var api=firstVisit
+    ?'https://api.countapi.xyz/hit/'+ns+'/'+key
+    :'https://api.countapi.xyz/get/'+ns+'/'+key;
+  fetch(api).then(r=>r.json()).then(d=>{
+    if(d&&typeof d.value==='number'){
+      n.innerText=d.value.toLocaleString();
+      el.style.display='flex';
+      requestAnimationFrame(()=>{el.style.opacity='1'});
+      if(firstVisit){sessionStorage.setItem(SEEN,'1');
+        window.track&&window.track('first_session_visit',{value:d.value});
+      }
+    }
+  }).catch(()=>{/* 静默失败,不影响主体 */});
+  // 关键动作埋点
+  window.addEventListener('load',function(){
+    setTimeout(function(){window.track&&window.track('page_loaded')},1000);
+  });
+  // 代理:图鉴打开、解锁、下载海报
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('#atlas-fab');
+    if(t)window.track&&window.track('atlas_open');
+    var d=e.target.closest('.province-path,[data-prov]');
+    if(d)window.track&&window.track('province_click',{name:d.getAttribute('data-prov')||''});
+  },true);
+})();
+</script>
 
 </body>
 </html>
